@@ -1,4 +1,0 @@
-﻿Rectangle
-Circle
-Polygon
-Triangle
