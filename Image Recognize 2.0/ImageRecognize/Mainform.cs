@@ -294,9 +294,28 @@ namespace CannyEdgeDetectionCSharp
             return npoints;
         }
 
+        private void TestDraw()
+        {
+            var image = new Bitmap(_inputImage.Width, _inputImage.Height);
+            foreach (var elem in _reducingList)
+            {
+                image.SetPixel((int)elem[0], (int)elem[1], Color.Black);
+            }
+            image.Save(@"C:\\1\\test1.bmp");
+
+            image = new Bitmap(_inputImage.Width, _inputImage.Height);
+            foreach (var elem in resultArray)
+            {
+                image.SetPixel((int)elem[0], (int)elem[1], Color.Black);
+            }
+            image.Save(@"C:\\1\\test2.bmp");
+
+        }
+
 
         private List<List<double[]>> GetOneObject()
         {
+            _objectsMassive.Clear();
             while (true)
             {
                 while(resultArray.Count<_n)
@@ -314,7 +333,17 @@ namespace CannyEdgeDetectionCSharp
 
                     if (_reducingList.Count < _n)
                     {
-                        return _objectsMassive.Count <= linesCount ? null : _objectsMassive;
+                        if (_objectsMassive.Count <= linesCount)
+                        {
+                            _objectsMassive.Clear();
+                            resultArray.Clear();
+                            continue;
+                        }
+                        DrawApproxBit();
+                        pathBmp = "C:\\1\\" + I + ".bmp";
+                        _approxBit.Save(pathBmp);
+                        I++;
+                        return _objectsMassive;
                     }
 
 
@@ -332,12 +361,10 @@ namespace CannyEdgeDetectionCSharp
                             if (elem[2] < min[2])
                             {
                                 min = elem;
-                                break;
                             }
                         }
                     }
-                    FuckingEquals(min, TempArray);
-                    FuckingEquals1(new[] { min[0], min[1] });
+                    FuckingEquals(new []{min[0], min[1]}, TempArray);
 
                     if (min[2] < LengthBetweenPoints)
                     {
@@ -374,6 +401,7 @@ namespace CannyEdgeDetectionCSharp
                         return _objectsMassive;
                     }
                 }
+                TempArray.Clear();
                 _objectsMassive.Add(new List<double[]>());
                 foreach (double[] t in resultArray)
                 {
@@ -499,7 +527,7 @@ namespace CannyEdgeDetectionCSharp
         private double Correlation(IReadOnlyList<double[]> cloud)
         {
             double meanX = 0, meanY = 0, upCor=0, downCor1=0, downCor2=0;
-            for (var i = 0; i < _n; i++)
+            for (var i = 0; i < cloud.Count; i++)
             {
                 meanX += cloud[i][0];
                 meanY += cloud[i][1];
@@ -507,7 +535,7 @@ namespace CannyEdgeDetectionCSharp
             meanX /= _n;
             meanY /= _n;
 
-            for (var i = 0; i < _n; i++)
+            for (var i = 0; i < cloud.Count; i++)
             {
                 upCor += (cloud[i][0] - meanX)*(cloud[i][1] - meanY);
                 downCor1 += Math.Pow(cloud[i][0] - meanX,2);
