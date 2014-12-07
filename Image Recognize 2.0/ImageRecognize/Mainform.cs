@@ -50,7 +50,7 @@ namespace CannyEdgeDetectionCSharp
         public int linesCount;
         public List<List<double[]>> TempArray = new List<List<double[]>>();
         public string pathBmp;
-        public double _correlationConst = 0.5;
+        public double _correlationConst;
 
         public List<double> libar1;
         public List<double> libar2;
@@ -102,6 +102,8 @@ namespace CannyEdgeDetectionCSharp
         {
             LengthBetweenObjects = Convert.ToInt32(textBox2.Text);
             LengthBetweenPoints = Convert.ToInt32(textBox3.Text);
+            _correlationConst = Convert.ToDouble(textBox4.Text);
+            linesCount = Convert.ToInt32(textBox5.Text);
 
             _reducingList = new List<double[]>();
             var th = float.Parse(TxtTH.Text);
@@ -328,6 +330,22 @@ namespace CannyEdgeDetectionCSharp
                             elem[0], elem[1], get_length(_nextPoint[0], elem[0], _nextPoint[1], elem[1])
                         });
                     }
+
+                    if (_reducingList.Count < _n)
+                    {
+                        if (_objectsMassive.Count <= linesCount)
+                        {
+                            _objectsMassive.Clear();
+                            resultArray.Clear();
+                            continue;
+                        }
+                        DrawApproxBit();
+                        pathBmp = "C:\\1\\" + I + ".bmp";
+                        _approxBit.Save(pathBmp);
+                        I++;
+                        return _objectsMassive;
+                    }
+
                     pointsLength.Sort((x, y) => x[2].CompareTo(y[2]));
                     FuckingEquals(new []{pointsLength[0][0], pointsLength[0][1]});
 
@@ -542,7 +560,7 @@ namespace CannyEdgeDetectionCSharp
                 downCor2 += Math.Pow(cloud[i][1] - meanY, 2);
             }
 
-            return upCor == 0 ? 1 : Math.Round(upCor/Math.Sqrt(downCor1*downCor2), 3);
+            return upCor == 0 ? 1 :Math.Abs(Math.Round(upCor/Math.Sqrt(downCor1*downCor2), 3));
         }
 
 
