@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace CannyEdgeDetectionCSharp
 {
-    public partial class Form2 : Form
+    public partial class Settings : Form
     {
-        public Form2()
+        public Settings()
         {
             InitializeComponent();
         }

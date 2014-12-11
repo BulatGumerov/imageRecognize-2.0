@@ -43,6 +43,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.button4 = new System.Windows.Forms.Button();
             this.toolStrip1.SuspendLayout();
             this.CNMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CannyEdges)).BeginInit();
@@ -109,7 +110,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(481, 549);
+            this.label7.Location = new System.Drawing.Point(453, 549);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(123, 13);
             this.label7.TabIndex = 55;
@@ -168,11 +169,22 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(582, 513);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(88, 49);
+            this.button4.TabIndex = 73;
+            this.button4.Text = "Settings";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // Mainform
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(677, 715);
+            this.ClientSize = new System.Drawing.Size(677, 571);
+            this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.pictureBox1);
@@ -213,6 +225,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button button4;
     }
 }
 
