@@ -38,19 +38,14 @@ namespace CannyEdgeDetectionCSharp
                     Directory.CreateDirectory(@"2\" + text);
                 }
             }
-
             main = Owner as Mainform;
-            //_fileName = main._fileName;
-            pictureBox2.Image = new Bitmap(main.Names[iterator][0]);
-            //pictureBox1.Image = new Bitmap(main.Names[iterator][0]);
             draw();
-            
         }
 
 
         private List<int[]> MinAndMaxes(IEnumerable<List<double[]>> cloud)
         {
-            
+
             double minx = double.PositiveInfinity, miny = double.PositiveInfinity, maxx = double.NegativeInfinity, maxy = double.NegativeInfinity;
             foreach (var nPoints in cloud)
             {
@@ -68,24 +63,24 @@ namespace CannyEdgeDetectionCSharp
                 }
             }
 
-            return new List<int[]> {new[] {(int) minx, (int) miny}, new[] {(int) maxx, (int) maxy}};
+            return new List<int[]> { new[] { (int)minx, (int)miny }, new[] { (int)maxx, (int)maxy } };
         }
 
         public void draw(string but)
         {
-            
+
             List<List<double[]>> currObject = main.AllApproximObjects[iterator];
             var a = MinAndMaxes(currObject);
-            Bitmap bit = new Bitmap(a[1][0]-a[0][0]+2, a[1][1]-a[0][1]+2);
+            Bitmap bit = new Bitmap(a[1][0] - a[0][0] + 2, a[1][1] - a[0][1] + 2);
             foreach (var nPoints in currObject)
             {
                 foreach (var point in nPoints)
                 {
-                    bit.SetPixel((int)point[0]-a[0][0], (int)point[1]-a[0][1], Color.Black);
+                    bit.SetPixel((int)point[0] - a[0][0], (int)point[1] - a[0][1], Color.Black);
                 }
             }
             pictureBox1.Image = bit;
-            bit.Save(@"2\"+but+"\\"+iterator+".bmp");
+            bit.Save(@"2\" + but + "\\" + iterator + ".bmp");
         }
 
         public void draw()
@@ -97,12 +92,11 @@ namespace CannyEdgeDetectionCSharp
             {
                 foreach (var point in nPoints)
                 {
-                    //тут падает 
                     bit.SetPixel((int)point[0] - a[0][0], (int)point[1] - a[0][1], Color.Black);
                 }
             }
             pictureBox1.Image = bit;
-            pictureBox2.Image = new Bitmap(main.Names[iterator][0]);
+            //pictureBox2.Image = new Bitmap(main.Names[iterator][0]);
         }
 
 
@@ -110,7 +104,7 @@ namespace CannyEdgeDetectionCSharp
         {
             try
             {
-                pictureBox2.Image = new Bitmap(main.Names[iterator][0]);
+                //pictureBox2.Image = new Bitmap(main.Names[iterator][0]);
                 iterator++;
                 draw();
             }
@@ -130,10 +124,10 @@ namespace CannyEdgeDetectionCSharp
                 return;
             }
             text = Interaction.InputBox("Введите название нового класса?", @"Новый класс", "");
-            Directory.CreateDirectory(@"2\"+text);
+            Directory.CreateDirectory(@"2\" + text);
             AddButton(new Button());
             StreamWriter reader = new StreamWriter(@"buttons.txt", true);
-            reader.Write(Environment.NewLine+text);
+            reader.Write(Environment.NewLine + text);
             reader.Close();
         }
 
@@ -153,7 +147,7 @@ namespace CannyEdgeDetectionCSharp
                 MessageBox.Show("Это был последний элемент");
                 return;
             }
-            var value = ((Button) sender).Tag;
+            var value = ((Button)sender).Tag;
             if (File.Exists(@"2\" + value + "\\" + main.Names[iterator][2]))
             {
                 File.Delete(@"2\" + value + "\\" + main.Names[iterator][2]);
@@ -166,10 +160,10 @@ namespace CannyEdgeDetectionCSharp
             {
                 File.Delete(@"2\" + value + "\\" + main.Names[iterator][5]);
             }
-            File.Copy(main.Names[iterator][0], @"2\"+value+"\\" + main.Names[iterator][2]);
+            File.Copy(main.Names[iterator][0], @"2\" + value + "\\" + main.Names[iterator][2]);
             //File.Copy(main.Names[iterator][1], @"\2\" + value + "\\" + main.Names[iterator][3]);
-            File.Copy(main.Names[iterator][4], @"2\"+value+"\\"+main.Names[iterator][5]);
-            draw(value.ToString()); 
+            File.Copy(main.Names[iterator][4], @"2\" + value + "\\" + main.Names[iterator][5]);
+            draw(value.ToString());
             iterator++;
             if (main.AllApproximObjects.Count == iterator)
             {
@@ -177,6 +171,12 @@ namespace CannyEdgeDetectionCSharp
                 return;
             }
             draw();
+        }
+
+        private List<string> ReadFolder()
+        {
+            var s = Directory.GetFiles(main.DescPathToDesctiptors + main._fileName,"*.bmp");
+            return s.ToList();
         }
     }
 }

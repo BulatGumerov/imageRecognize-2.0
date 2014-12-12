@@ -33,30 +33,30 @@
             this.button4 = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.MinSegmentsCount = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.Correlation = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.LengthInsideObject = new System.Windows.Forms.TextBox();
+            this.LengthBetweenObjects = new System.Windows.Forms.TextBox();
+            this.PointsCountInsideSegment = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.TxtTL = new System.Windows.Forms.TextBox();
-            this.TxtTH = new System.Windows.Forms.TextBox();
+            this.TL = new System.Windows.Forms.TextBox();
+            this.TH = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox6 = new System.Windows.Forms.TextBox();
-            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.PathToDesctiptors = new System.Windows.Forms.TextBox();
+            this.PathToLibrary = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
-            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.MaskSize = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
-            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.Sigma = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // button5
@@ -104,13 +104,13 @@
             this.label9.TabIndex = 97;
             this.label9.Text = "Число отрезков";
             // 
-            // textBox5
+            // MinSegmentsCount
             // 
-            this.textBox5.Location = new System.Drawing.Point(236, 134);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(39, 20);
-            this.textBox5.TabIndex = 84;
-            this.textBox5.Text = "10";
+            this.MinSegmentsCount.Location = new System.Drawing.Point(236, 134);
+            this.MinSegmentsCount.Name = "MinSegmentsCount";
+            this.MinSegmentsCount.Size = new System.Drawing.Size(39, 20);
+            this.MinSegmentsCount.TabIndex = 84;
+            this.MinSegmentsCount.Text = "10";
             // 
             // label8
             // 
@@ -121,13 +121,13 @@
             this.label8.TabIndex = 96;
             this.label8.Text = "Корреляция";
             // 
-            // textBox4
+            // Correlation
             // 
-            this.textBox4.Location = new System.Drawing.Point(331, 134);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(43, 20);
-            this.textBox4.TabIndex = 95;
-            this.textBox4.Text = "0,3";
+            this.Correlation.Location = new System.Drawing.Point(331, 134);
+            this.Correlation.Name = "Correlation";
+            this.Correlation.Size = new System.Drawing.Size(43, 20);
+            this.Correlation.TabIndex = 95;
+            this.Correlation.Text = "0,3";
             // 
             // label6
             // 
@@ -147,29 +147,29 @@
             this.label5.TabIndex = 93;
             this.label5.Text = "Расстояние между \r\nобъектами";
             // 
-            // textBox3
+            // LengthInsideObject
             // 
-            this.textBox3.Location = new System.Drawing.Point(269, 70);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(39, 20);
-            this.textBox3.TabIndex = 92;
-            this.textBox3.Text = "5";
+            this.LengthInsideObject.Location = new System.Drawing.Point(269, 70);
+            this.LengthInsideObject.Name = "LengthInsideObject";
+            this.LengthInsideObject.Size = new System.Drawing.Size(39, 20);
+            this.LengthInsideObject.TabIndex = 92;
+            this.LengthInsideObject.Text = "5";
             // 
-            // textBox2
+            // LengthBetweenObjects
             // 
-            this.textBox2.Location = new System.Drawing.Point(157, 70);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(39, 20);
-            this.textBox2.TabIndex = 91;
-            this.textBox2.Text = "10";
+            this.LengthBetweenObjects.Location = new System.Drawing.Point(157, 70);
+            this.LengthBetweenObjects.Name = "LengthBetweenObjects";
+            this.LengthBetweenObjects.Size = new System.Drawing.Size(39, 20);
+            this.LengthBetweenObjects.TabIndex = 91;
+            this.LengthBetweenObjects.Text = "10";
             // 
-            // textBox1
+            // PointsCountInsideSegment
             // 
-            this.textBox1.Location = new System.Drawing.Point(157, 134);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(34, 20);
-            this.textBox1.TabIndex = 90;
-            this.textBox1.Text = "10";
+            this.PointsCountInsideSegment.Location = new System.Drawing.Point(157, 134);
+            this.PointsCountInsideSegment.Name = "PointsCountInsideSegment";
+            this.PointsCountInsideSegment.Size = new System.Drawing.Size(34, 20);
+            this.PointsCountInsideSegment.TabIndex = 90;
+            this.PointsCountInsideSegment.Text = "10";
             // 
             // label4
             // 
@@ -198,21 +198,21 @@
             this.label1.TabIndex = 87;
             this.label1.Text = "High TH";
             // 
-            // TxtTL
+            // TL
             // 
-            this.TxtTL.Location = new System.Drawing.Point(65, 70);
-            this.TxtTL.Name = "TxtTL";
-            this.TxtTL.Size = new System.Drawing.Size(41, 20);
-            this.TxtTL.TabIndex = 86;
-            this.TxtTL.Text = "240";
+            this.TL.Location = new System.Drawing.Point(65, 70);
+            this.TL.Name = "TL";
+            this.TL.Size = new System.Drawing.Size(41, 20);
+            this.TL.TabIndex = 86;
+            this.TL.Text = "240";
             // 
-            // TxtTH
+            // TH
             // 
-            this.TxtTH.Location = new System.Drawing.Point(12, 70);
-            this.TxtTH.Name = "TxtTH";
-            this.TxtTH.Size = new System.Drawing.Size(38, 20);
-            this.TxtTH.TabIndex = 85;
-            this.TxtTH.Text = "250";
+            this.TH.Location = new System.Drawing.Point(12, 70);
+            this.TH.Name = "TH";
+            this.TH.Size = new System.Drawing.Size(38, 20);
+            this.TH.TabIndex = 85;
+            this.TH.Text = "250";
             // 
             // label3
             // 
@@ -223,19 +223,19 @@
             this.label3.TabIndex = 102;
             this.label3.Text = "Canny";
             // 
-            // textBox6
+            // PathToDesctiptors
             // 
-            this.textBox6.Location = new System.Drawing.Point(285, 202);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(100, 20);
-            this.textBox6.TabIndex = 103;
+            this.PathToDesctiptors.Location = new System.Drawing.Point(285, 202);
+            this.PathToDesctiptors.Name = "PathToDesctiptors";
+            this.PathToDesctiptors.Size = new System.Drawing.Size(100, 20);
+            this.PathToDesctiptors.TabIndex = 103;
             // 
-            // textBox7
+            // PathToLibrary
             // 
-            this.textBox7.Location = new System.Drawing.Point(285, 267);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(100, 20);
-            this.textBox7.TabIndex = 104;
+            this.PathToLibrary.Location = new System.Drawing.Point(285, 267);
+            this.PathToLibrary.Name = "PathToLibrary";
+            this.PathToLibrary.Size = new System.Drawing.Size(100, 20);
+            this.PathToLibrary.TabIndex = 104;
             // 
             // label7
             // 
@@ -272,6 +272,7 @@
             this.button1.TabIndex = 108;
             this.button1.Text = "Save";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // label14
             // 
@@ -282,13 +283,13 @@
             this.label14.TabIndex = 109;
             this.label14.Text = "Mask Size";
             // 
-            // textBox8
+            // MaskSize
             // 
-            this.textBox8.Location = new System.Drawing.Point(12, 121);
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(38, 20);
-            this.textBox8.TabIndex = 110;
-            this.textBox8.Text = "5";
+            this.MaskSize.Location = new System.Drawing.Point(12, 121);
+            this.MaskSize.Name = "MaskSize";
+            this.MaskSize.Size = new System.Drawing.Size(38, 20);
+            this.MaskSize.TabIndex = 110;
+            this.MaskSize.Text = "5";
             // 
             // label15
             // 
@@ -299,50 +300,51 @@
             this.label15.TabIndex = 111;
             this.label15.Text = "Sigma";
             // 
-            // textBox9
+            // Sigma
             // 
-            this.textBox9.Location = new System.Drawing.Point(74, 121);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(38, 20);
-            this.textBox9.TabIndex = 112;
-            this.textBox9.Text = "1";
+            this.Sigma.Location = new System.Drawing.Point(74, 121);
+            this.Sigma.Name = "Sigma";
+            this.Sigma.Size = new System.Drawing.Size(38, 20);
+            this.Sigma.TabIndex = 112;
+            this.Sigma.Text = "1";
             // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(407, 339);
-            this.Controls.Add(this.textBox9);
+            this.Controls.Add(this.Sigma);
             this.Controls.Add(this.label15);
-            this.Controls.Add(this.textBox8);
+            this.Controls.Add(this.MaskSize);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.textBox7);
-            this.Controls.Add(this.textBox6);
+            this.Controls.Add(this.PathToLibrary);
+            this.Controls.Add(this.PathToDesctiptors);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
-            this.Controls.Add(this.textBox5);
+            this.Controls.Add(this.MinSegmentsCount);
             this.Controls.Add(this.label8);
-            this.Controls.Add(this.textBox4);
+            this.Controls.Add(this.Correlation);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.LengthInsideObject);
+            this.Controls.Add(this.LengthBetweenObjects);
+            this.Controls.Add(this.PointsCountInsideSegment);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.TxtTL);
-            this.Controls.Add(this.TxtTH);
+            this.Controls.Add(this.TL);
+            this.Controls.Add(this.TH);
             this.Name = "Settings";
             this.Text = "Form2";
+            this.Load += new System.EventHandler(this.Settings_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -355,29 +357,29 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox MinSegmentsCount;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox Correlation;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox LengthInsideObject;
+        private System.Windows.Forms.TextBox LengthBetweenObjects;
+        private System.Windows.Forms.TextBox PointsCountInsideSegment;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox TxtTL;
-        private System.Windows.Forms.TextBox TxtTH;
+        private System.Windows.Forms.TextBox TL;
+        private System.Windows.Forms.TextBox TH;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox6;
-        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.TextBox PathToDesctiptors;
+        private System.Windows.Forms.TextBox PathToLibrary;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.TextBox MaskSize;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.TextBox textBox9;
+        private System.Windows.Forms.TextBox Sigma;
     }
 }

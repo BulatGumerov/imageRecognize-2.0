@@ -163,7 +163,7 @@
             this.button3.TabIndex = 72;
             this.button3.Text = "Comparsion";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.Step4Comparsion);
+            //this.button3.Click += new System.EventHandler(this.Step4Comparsion);
             // 
             // openFileDialog1
             // 
@@ -194,6 +194,7 @@
             this.Controls.Add(this.CannyEdges);
             this.Controls.Add(this.BtnCannyEdgeDetect);
             this.Controls.Add(this.toolStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Mainform";
