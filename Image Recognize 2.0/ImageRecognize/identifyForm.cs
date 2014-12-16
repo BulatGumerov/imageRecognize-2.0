@@ -32,7 +32,7 @@ namespace CannyEdgeDetectionCSharp
             {
                 var but = new Button();
                 text = str;
-                AddButton(but);
+                //AddButton(but);
                 if (!Directory.Exists(@"2\" + text))
                 {
                     Directory.CreateDirectory(@"2\" + text);
@@ -148,21 +148,22 @@ namespace CannyEdgeDetectionCSharp
                 return;
             }
             var value = ((Button)sender).Tag;
-            if (File.Exists(@"2\" + value + "\\" + main.Names[iterator][2]))
+            var fromDescriptor = ReadFolder(main.DescPathToDesctiptors);
+            if (File.Exists(main.DescPathToLibrary + main._fileName + "\\" + fromDescriptor[iterator]))
             {
-                File.Delete(@"2\" + value + "\\" + main.Names[iterator][2]);
+                File.Delete(main.DescPathToLibrary + main._fileName + "\\" + fromDescriptor[iterator]);
             }
             //if (File.Exists(@"\2\" + value + "\\" + main.Names[iterator][3]))
             //{
             //    File.Delete(@"\2\" + value + "\\" + main.Names[iterator][3]);
             //}
-            if (File.Exists(@"2\" + value + "\\" + main.Names[iterator][5]))
-            {
-                File.Delete(@"2\" + value + "\\" + main.Names[iterator][5]);
-            }
-            File.Copy(main.Names[iterator][0], @"2\" + value + "\\" + main.Names[iterator][2]);
+            ////if (File.Exists(main.DescPathToLibrary + value + "\\" + main.Names[iterator][5]))
+            ////{
+            ////    File.Delete(@"2\" + value + "\\" + main.Names[iterator][5]);
+            ////}
+            File.Copy(main.DescPathToDesctiptors + main._fileName + "\\" + fromDescriptor[iterator], main.DescPathToLibrary + main._fileName + "\\" + fromDescriptor[iterator]);
             //File.Copy(main.Names[iterator][1], @"\2\" + value + "\\" + main.Names[iterator][3]);
-            File.Copy(main.Names[iterator][4], @"2\" + value + "\\" + main.Names[iterator][5]);
+            //File.Copy(main.Names[iterator][4], @"2\" + value + "\\" + main.Names[iterator][5]);
             draw(value.ToString());
             iterator++;
             if (main.AllApproximObjects.Count == iterator)
@@ -173,9 +174,9 @@ namespace CannyEdgeDetectionCSharp
             draw();
         }
 
-        private List<string> ReadFolder()
+        private List<string> ReadFolder(string path)
         {
-            var s = Directory.GetFiles(main.DescPathToDesctiptors + main._fileName,"*.bmp");
+            var s = Directory.GetFiles(path + main._fileName, "*.bmp");
             return s.ToList();
         }
     }

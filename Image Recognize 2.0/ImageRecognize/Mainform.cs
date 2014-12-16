@@ -35,7 +35,7 @@ namespace CannyEdgeDetectionCSharp
 
 
         private Canny _cannyData;
-        private List<double[]> _reducingList;
+        private List<double[]> _reducingList = new List<double[]>();
         private OpenFileDialog _ofd;
         private bool _endObj;
         private double[] _nextPoint = new double[3];
@@ -70,7 +70,7 @@ namespace CannyEdgeDetectionCSharp
 
         ///////////////////////////////////////////
         public string inputFileName;
-        public string pathForCircuit = "C:\\1\\kontur.bmp";
+        public string pathForCircuit;
 
 
         //private List<double[]> _approxNPoints;
@@ -107,7 +107,10 @@ namespace CannyEdgeDetectionCSharp
             {
                 _cannyData = new Canny(_inputImage, CannyHighTh, CannyLowTL, CannyMaskSize, CannySigma);
                 CannyEdges.Image = _cannyData.DisplayImage(_cannyData.EdgeMap);
-                new Bitmap(CannyEdges.Image).Save(pathForCircuit);
+
+                CheckCreateDirectories();
+                pathForCircuit = DescPathToDesctiptors + _fileName+"\\circuit.bmp";
+                new Bitmap(CannyEdges.Image).Save(@pathForCircuit);
             }
             catch (NullReferenceException)
             {
@@ -120,8 +123,9 @@ namespace CannyEdgeDetectionCSharp
                     if (_cannyData.EdgeMap[i, j] > 0)
                         _reducingList.Add(new[] { i, (double)j });
                 }
-            CheckCreateDirectories();
             _beginPoint = GetMaxLength(_reducingList, ShapeCenter());
+
+
         }
 
 
@@ -321,6 +325,7 @@ namespace CannyEdgeDetectionCSharp
                         });
                     }
 
+                    //исправить
                     if (_reducingList.Count < DescPointsCountInsideSegment)
                     {
                         if (_objectsMassive.Count <= DescMinSegmentsCount)
@@ -330,7 +335,7 @@ namespace CannyEdgeDetectionCSharp
                             continue;
                         }
                         DrawApproxBit();
-                        pathBmp = "C:\\1\\" + I + ".bmp";
+                        pathBmp = pathForCircuit + I + ".bmp";
                         _approxBit.Save(pathBmp);
                         I++;
                         return _objectsMassive;
@@ -339,6 +344,7 @@ namespace CannyEdgeDetectionCSharp
                     pointsLength.Sort((x, y) => x[2].CompareTo(y[2]));
                     FuckingEquals(new[] {pointsLength[0][0], pointsLength[0][1]});
 
+                    //исправить
                     if (_reducingList.Count < DescPointsCountInsideSegment)
                     {
                         if (_objectsMassive.Count <= DescMinSegmentsCount)
@@ -348,7 +354,7 @@ namespace CannyEdgeDetectionCSharp
                             continue;
                         }
                         DrawApproxBit();
-                        pathBmp = "C:\\1\\" + I + ".bmp";
+                        pathBmp = pathForCircuit + I + ".bmp";
                         _approxBit.Save(pathBmp);
                         I++;
                         return _objectsMassive;
@@ -403,7 +409,7 @@ namespace CannyEdgeDetectionCSharp
                             continue;
                         }
                         DrawApproxBit();
-                        pathBmp = "C:\\1\\" + I + ".bmp";
+                        pathBmp = pathForCircuit + I + ".bmp";
                         _approxBit.Save(pathBmp);
                         I++;
                         return _objectsMassive;
@@ -654,13 +660,13 @@ namespace CannyEdgeDetectionCSharp
 
         private void CheckCreateDirectories()
         {
-            if (Directory.Exists(@"1\" + _fileName))
+            if (Directory.Exists(DescPathToDesctiptors + _fileName))
             {
                 MessageBox.Show(
                     @"Папка с таким названием уже существует. Прекратите выполнение программы и измените название входного файла, иначе выходные файлы будут перезаписаны.");
             }
             else
-                Directory.CreateDirectory(@"1\" + _fileName);
+                Directory.CreateDirectory(DescPathToDesctiptors + _fileName);
         }
 
 
@@ -808,7 +814,7 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else if (line.Contains(bDescPathToDesctiptors))
                     {
-                        DescPathToDesctiptors = line.Substring(line.IndexOf(' '));
+                        DescPathToDesctiptors = line.Substring(line.IndexOf(' ')+2);
                     }
                     else if (line.Contains(bDescPathToLibrary))
                     {
@@ -818,6 +824,7 @@ namespace CannyEdgeDetectionCSharp
                 }
             }
         }
+
 
 
 
