@@ -23,22 +23,21 @@ namespace CannyEdgeDetectionCSharp
         //private string _fileName;
         public Mainform main;
         private int iterator;
-        private string text;
 
         private void identifyForm_Load(object sender, EventArgs e)
         {
             var lines = File.ReadAllLines(@"buttons.txt");
+            main = Owner as Mainform;
             foreach (var str in lines)
             {
                 var but = new Button();
-                text = str;
-                //AddButton(but);
-                if (!Directory.Exists(@"2\" + text))
+                AddButton(but, str);
+                if (!Directory.Exists(main.DescPathToLibrary + str))
                 {
-                    Directory.CreateDirectory(@"2\" + text);
+                    Directory.CreateDirectory(main.DescPathToLibrary + str);
                 }
             }
-            main = Owner as Mainform;
+
             draw();
         }
 
@@ -80,7 +79,8 @@ namespace CannyEdgeDetectionCSharp
                 }
             }
             pictureBox1.Image = bit;
-            bit.Save(@"2\" + but + "\\" + iterator + ".bmp");
+            pictureBox2.Image = new Bitmap(main.DescPathToDesctiptors+main._fileName+"\\"+iterator+".bmp");
+            bit.Save(main.DescPathToLibrary + but + "\\" + iterator + ".bmp");
         }
 
         public void draw()
@@ -96,7 +96,7 @@ namespace CannyEdgeDetectionCSharp
                 }
             }
             pictureBox1.Image = bit;
-            //pictureBox2.Image = new Bitmap(main.Names[iterator][0]);
+            pictureBox2.Image = new Bitmap(main.DescPathToDesctiptors + main._fileName + "\\" + iterator + ".bmp");
         }
 
 
@@ -104,7 +104,6 @@ namespace CannyEdgeDetectionCSharp
         {
             try
             {
-                //pictureBox2.Image = new Bitmap(main.Names[iterator][0]);
                 iterator++;
                 draw();
             }
@@ -123,15 +122,15 @@ namespace CannyEdgeDetectionCSharp
                 MessageBox.Show("Это был последний элемент");
                 return;
             }
-            text = Interaction.InputBox("Введите название нового класса?", @"Новый класс", "");
-            Directory.CreateDirectory(@"2\" + text);
-            AddButton(new Button());
+            string newText = Interaction.InputBox("Введите название нового класса?", @"Новый класс", "");
+            Directory.CreateDirectory(main.DescPathToLibrary + newText);
+            AddButton(new Button(), newText);
             StreamWriter reader = new StreamWriter(@"buttons.txt", true);
-            reader.Write(Environment.NewLine + text);
+            reader.Write(Environment.NewLine + newText);
             reader.Close();
         }
 
-        private void AddButton(Button but)
+        private void AddButton(Button but, string text)
         {
             but.Text = text;
             but.Click += ClickBut;

@@ -31,7 +31,7 @@ namespace CannyEdgeDetectionCSharp
         public string DescPathToDesctiptors;
         public string DescPathToLibrary;
 
-
+        public List<List<double>> differences = new List<List<double>>();
 
 
         private Canny _cannyData;
@@ -45,9 +45,6 @@ namespace CannyEdgeDetectionCSharp
         private Bitmap _approxBit;
         private Bitmap _inputImage;
         public String _fileName;
-        //public int CountForFoundObjects=0;
-        //public Bitmap OneSmallObject;
-        public double NearestP; //how much points find in begining
         public int I;
 
         public List<List<double[]>> TempArray = new List<List<double[]>>();
@@ -58,16 +55,8 @@ namespace CannyEdgeDetectionCSharp
         public List<double> libar2;
         public List<double> inpAr;
 
-        public int iterat = 0;
-
 
         public List<double[]> resultArray;
-        //private bool _flagForSteps=true;
-
-        private readonly List<double> _correlationList = new List<double>();
-        private readonly List<double[]> _regressionList = new List<double[]>();
-
-
         ///////////////////////////////////////////
         public string inputFileName;
         public string pathForCircuit;
@@ -81,8 +70,8 @@ namespace CannyEdgeDetectionCSharp
             _ofd = new OpenFileDialog
             {
                 Filter =
-                    @"PNG files (*.png)|*.png| Bitmap files (*.bmp)|*.bmp|TIFF files (*.tif)|*tif|JPEG files (*.jpg)|*.jpg",
-                FilterIndex = 4,
+                    @"PNG files (*.png)|*.png|Bitmap files (*.bmp)|*.bmp|TIFF files (*.tif)|*tif|JPEG files (*.jpg)|*.jpg",
+                FilterIndex = 1,
                 RestoreDirectory = true
             };
 
@@ -102,7 +91,6 @@ namespace CannyEdgeDetectionCSharp
 
         private void Step1Canny(object sender, EventArgs e)
         {
-            ReadSettings();
             try
             {
                 _cannyData = new Canny(_inputImage, CannyHighTh, CannyLowTL, CannyMaskSize, CannySigma);
@@ -139,11 +127,13 @@ namespace CannyEdgeDetectionCSharp
             {
                 while (true)
                 {
-                    if (_reducingList.Count >= DescPointsCountInsideSegment)
+                    if (_reducingList.Count > DescPointsCountInsideSegment+1)
                     {
                         resultArray = new List<double[]>();
                         _nextPoint = _beginPoint;
-                        AllApproximObjects.Add(GetOneObject());
+                        var obj = GetOneObject();
+                        if(obj!=null)
+                        AllApproximObjects.Add(obj);
                     }
                     else
                     {
@@ -186,108 +176,98 @@ namespace CannyEdgeDetectionCSharp
 
 
 
-        //private void Step4Comparsion(object sender, EventArgs e)
-        //{
-        //    var result = new List<Tuple<double, double, double, string>>();
-        //    inpAr = new List<double>();
-        //    if (iterat >= Names.Count)
-        //    {
-        //        MessageBox.Show("Элементы кончились");
-        //        return;
-        //    }
-        //    var q = new StreamReader(Names[iterat][4]);
-        //    comparsionImg = Names[iterat][0];
-        //    string doubles;
-        //    while ((doubles = q.ReadLine()) != null)
-        //    {
-        //        inpAr.Add(Convert.ToDouble(doubles));
-        //    }
-
-        //    var directories = Directory.GetDirectories(@"2\");
-        //    foreach (var name in directories)
-        //    {
-        //        var files = Directory.GetFiles(name + "\\", "*.txt");
-        //        foreach (var file in files)
-        //        {
-        //            // MessageBox.Show(file);
-        //            var mins = new List<double>();
-        //            libar1 = new List<double>();
-        //            libar2 = new List<double>();
-        //            var t = new StreamReader(file);
-        //            string dbls;
-        //            while ((dbls = t.ReadLine()) != null)
-        //            {
-        //                libar1.Add(Convert.ToDouble(dbls));
-        //                libar2.Add(Convert.ToDouble(dbls));
-        //            }
-        //            for (var i = 2; i < inpAr.Count; i++)
-        //            {
-        //                mins.Add(equalTwoArrays(new[] { inpAr[i - 2], inpAr[i - 1], inpAr[i] }));
-        //            }
-        //            var total = mins.Sum();
-
-        //            mins = new List<double>();
-        //            for (var i = 2; i < libar2.Count; i++)
-        //            {
-        //                mins.Add(equalTwoArraysRevert(new[] { libar2[i - 2], libar2[i - 1], libar2[i] }));
-        //            }
-        //            var total2 = mins.Sum();
-        //            t.Close();
-        //            result.Add(new Tuple<double, double, double, string>(total + total2, total, total2, file));
-        //        }
-        //    }
-
-        //    if (result.Count == 0)
-        //    {
-        //        MessageBox.Show(@"В библиотеке нет элементов");
-        //        return;
-        //    }
-
-        //    result.Sort();
-        //    var txtFile = new StreamWriter(@"1\" + _fileName + "\\" + "outCopmare" + iterat + ".txt");
-        //    pathForComparsion = result[1].Item4;
-        //    pathForComparsion = pathForComparsion.Substring(0, pathForComparsion.Length - 4);
-        //    pathForComparsion += ".bmp";
-        //    pathForComparsionTxt = result[1].Item1;
-
-        //    pathForComparsion2 = result[2].Item4;
-        //    pathForComparsion2 = pathForComparsion2.Substring(0, pathForComparsion2.Length - 4);
-        //    pathForComparsion2 += ".bmp";
-        //    pathForComparsionTxt2 = result[2].Item1;
-
-        //    pathForComparsion3 = result[3].Item4;
-        //    pathForComparsion3 = pathForComparsion3.Substring(0, pathForComparsion3.Length - 4);
-        //    pathForComparsion3 += ".bmp";
-        //    pathForComparsionTxt3 = result[3].Item1;
-
-        //    draw();
-
-        //    foreach (var line in result)
-        //    {
-        //        txtFile.WriteLine(line.Item1 + @" " + line.Item2 + @" " + line.Item3 + @" " + line.Item4);
-        //    }
-        //    txtFile.Close();
-        //    iterat++;
-
-
-
-        //    //var comparsion = new ComparsionForm() {Owner = this};
-        //    //comparsion.ShowDialog();
-        //}
-
-
-        private List<double[]> getNNearestPoints(double[] point)
+        private void Step4Comparsion(object sender, EventArgs e)
         {
-            var npoints = new List<double[]>();
-            var pointLength = new List<double[]>();
-            pointLength.AddRange(
-                _reducingList.Select(t1 => new[] {t1[0], t1[1], get_length(point[0], t1[0], point[1], t1[1])}));
-            pointLength.Sort((x, y) => x[2].CompareTo(y[2]));
-            for (var i = 1; i < NearestP + 1; i++)
-            {
-                npoints.Add(pointLength[i]);
-            }
-            return npoints;
+            //var result = new List<Tuple<double, double, double, string>>();
+            //inpAr = new List<double>();
+            //if (iterat >= Names.Count)
+            //{
+            //    MessageBox.Show("Элементы кончились");
+            //    return;
+            //}
+            //var q = new StreamReader(Names[iterat][4]);
+            //comparsionImg = Names[iterat][0];
+            //string doubles;
+            //while ((doubles = q.ReadLine()) != null)
+            //{
+            //    inpAr.Add(Convert.ToDouble(doubles));
+            //}
+
+            //var directories = Directory.GetDirectories(@"2\");
+            //foreach (var name in directories)
+            //{
+            //    var files = Directory.GetFiles(name + "\\", "*.txt");
+            //    foreach (var file in files)
+            //    {
+            //        // MessageBox.Show(file);
+            //        var mins = new List<double>();
+            //        libar1 = new List<double>();
+            //        libar2 = new List<double>();
+            //        var t = new StreamReader(file);
+            //        string dbls;
+            //        while ((dbls = t.ReadLine()) != null)
+            //        {
+            //            libar1.Add(Convert.ToDouble(dbls));
+            //            libar2.Add(Convert.ToDouble(dbls));
+            //        }
+            //        for (var i = 2; i < inpAr.Count; i++)
+            //        {
+            //            mins.Add(equalTwoArrays(new[] { inpAr[i - 2], inpAr[i - 1], inpAr[i] }));
+            //        }
+            //        var total = mins.Sum();
+
+            //        mins = new List<double>();
+            //        for (var i = 2; i < libar2.Count; i++)
+            //        {
+            //            mins.Add(equalTwoArraysRevert(new[] { libar2[i - 2], libar2[i - 1], libar2[i] }));
+            //        }
+            //        var total2 = mins.Sum();
+            //        t.Close();
+            //        result.Add(new Tuple<double, double, double, string>(total + total2, total, total2, file));
+            //    }
+            //}
+
+            //if (result.Count == 0)
+            //{
+            //    MessageBox.Show(@"В библиотеке нет элементов");
+            //    return;
+            //}
+
+            //result.Sort();
+            //var txtFile = new StreamWriter(@"1\" + _fileName + "\\" + "outCopmare" + iterat + ".txt");
+            //pathForComparsion = result[1].Item4;
+            //pathForComparsion = pathForComparsion.Substring(0, pathForComparsion.Length - 4);
+            //pathForComparsion += ".bmp";
+            //pathForComparsionTxt = result[1].Item1;
+
+            //pathForComparsion2 = result[2].Item4;
+            //pathForComparsion2 = pathForComparsion2.Substring(0, pathForComparsion2.Length - 4);
+            //pathForComparsion2 += ".bmp";
+            //pathForComparsionTxt2 = result[2].Item1;
+
+            //pathForComparsion3 = result[3].Item4;
+            //pathForComparsion3 = pathForComparsion3.Substring(0, pathForComparsion3.Length - 4);
+            //pathForComparsion3 += ".bmp";
+            //pathForComparsionTxt3 = result[3].Item1;
+
+            //draw();
+
+            //foreach (var line in result)
+            //{
+            //    txtFile.WriteLine(line.Item1 + @" " + line.Item2 + @" " + line.Item3 + @" " + line.Item4);
+            //}
+            //txtFile.Close();
+            //iterat++;
+
+
+
+            var comparsion = new ComparsionForm() { Owner = this };
+            comparsion.ShowDialog();
+        }
+
+        private void MakeObjectDescription()
+        {
+            
         }
 
         private void TestDraw()
@@ -316,6 +296,20 @@ namespace CannyEdgeDetectionCSharp
             {
                 while (resultArray.Count < DescPointsCountInsideSegment)
                 {
+                    if (_reducingList.Count < DescPointsCountInsideSegment + 1)
+                    {
+                        if (_objectsMassive.Count <= DescMinSegmentsCount)
+                        {
+                            _objectsMassive.Clear();
+                            resultArray.Clear();
+                            return null;
+                        }
+                        DrawApproxBit();
+                        pathBmp = DescPathToDesctiptors + _fileName + "\\" + I + ".bmp";
+                        _approxBit.Save(pathBmp);
+                        I++;
+                        return _objectsMassive;
+                    }
                     var pointsLength = new List<double[]>();
                     foreach (var elem in _reducingList)
                     {
@@ -324,41 +318,10 @@ namespace CannyEdgeDetectionCSharp
                             elem[0], elem[1], get_length(_nextPoint[0], elem[0], _nextPoint[1], elem[1])
                         });
                     }
-
-                    //исправить
-                    if (_reducingList.Count < DescPointsCountInsideSegment)
-                    {
-                        if (_objectsMassive.Count <= DescMinSegmentsCount)
-                        {
-                            _objectsMassive.Clear();
-                            resultArray.Clear();
-                            continue;
-                        }
-                        DrawApproxBit();
-                        pathBmp = pathForCircuit + I + ".bmp";
-                        _approxBit.Save(pathBmp);
-                        I++;
-                        return _objectsMassive;
-                    }
+                   
 
                     pointsLength.Sort((x, y) => x[2].CompareTo(y[2]));
                     FuckingEquals(new[] {pointsLength[0][0], pointsLength[0][1]});
-
-                    //исправить
-                    if (_reducingList.Count < DescPointsCountInsideSegment)
-                    {
-                        if (_objectsMassive.Count <= DescMinSegmentsCount)
-                        {
-                            _objectsMassive.Clear();
-                            resultArray.Clear();
-                            continue;
-                        }
-                        DrawApproxBit();
-                        pathBmp = pathForCircuit + I + ".bmp";
-                        _approxBit.Save(pathBmp);
-                        I++;
-                        return _objectsMassive;
-                    }
 
 
                     TempArray.Add(new List<double[]>());
@@ -409,10 +372,9 @@ namespace CannyEdgeDetectionCSharp
                             continue;
                         }
                         DrawApproxBit();
-                        pathBmp = pathForCircuit + I + ".bmp";
-                        _approxBit.Save(pathBmp);
+                        MakeDescriptions();
                         I++;
-                        return _objectsMassive;
+                        return new List<List<double[]>>(_objectsMassive);
                     }
                 }
                 TempArray.Clear();
@@ -421,7 +383,6 @@ namespace CannyEdgeDetectionCSharp
                 {
                     _objectsMassive[_objectsMassive.Count - 1].Add(t);
                 }
-                //_objectsMassive.Add(resultArray);
                 _nextPoint = new[] {resultArray[resultArray.Count - 1][0], resultArray[resultArray.Count - 1][1]};
                 resultArray.Clear();
             }
@@ -482,15 +443,6 @@ namespace CannyEdgeDetectionCSharp
             }
         }
 
-
-        private void FuckingEquals1(double[] point)
-        {
-            foreach (var elem in _reducingList.Where(elem => point[0] == elem[0] && point[1] == elem[1]))
-            {
-                _reducingList.Remove(elem);
-                break;
-            }
-        }
 
 
         private static void FuckingEquals(IList<double> point, IEnumerable<List<double[]>> cloud)
@@ -631,6 +583,32 @@ namespace CannyEdgeDetectionCSharp
                     }
                 }
             }
+            pathBmp = DescPathToDesctiptors + _fileName + "\\" + I + ".bmp";
+            _approxBit.Save(pathBmp);
+        }
+
+
+        private void MakeDescriptions()
+        {
+            var descFile = new StreamWriter(DescPathToDesctiptors + _fileName + "\\" + I + ".txt");
+            foreach (var cloud in _objectsMassive)
+            {
+                var regression = get_regression(cloud);
+                descFile.WriteLine(@"корреляция=" + Correlation(cloud) + " a=" + regression[0] + " b=" + regression[1]);
+                
+            }
+            descFile.Close();
+
+            var descDifference = new StreamWriter(DescPathToDesctiptors + _fileName + "\\" + I + "_d.txt");
+            differences.Add(new List<double>());
+            for (var i = 1; i < _objectsMassive.Count; i++)
+            {
+                var regressionNext = get_regression(_objectsMassive[i]);
+                var regressionPrev = get_regression(_objectsMassive[i - 1]);
+                descDifference.WriteLine(Math.Round(Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]), 3));
+                differences[differences.Count - 1].Add(Math.Round(Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]), 3));
+            }
+            descDifference.Close();
         }
 
 
@@ -650,14 +628,6 @@ namespace CannyEdgeDetectionCSharp
             return min;
         }
 
-
-
-
-
-
-
-
-
         private void CheckCreateDirectories()
         {
             if (Directory.Exists(DescPathToDesctiptors + _fileName))
@@ -667,27 +637,6 @@ namespace CannyEdgeDetectionCSharp
             }
             else
                 Directory.CreateDirectory(DescPathToDesctiptors + _fileName);
-        }
-
-
-
-
-
-
-        public void draw()
-        {
-            List<List<double[]>> currObject = AllApproximObjects[iterat];
-            var a = GetMinMax(currObject);
-            Bitmap bit = new Bitmap(a[1][0] - a[0][0] + 2, a[1][1] - a[0][1] + 2);
-            foreach (var nPoints in currObject)
-            {
-                foreach (var point in nPoints)
-                {
-                    //тут падает 
-                    bit.SetPixel((int) point[0] - a[0][0], (int) point[1] - a[0][1], Color.Black);
-                }
-            }
-           // bitForComparsion = bit;
         }
 
 
@@ -757,7 +706,7 @@ namespace CannyEdgeDetectionCSharp
         }
 
 
-        public void ReadSettings()
+        public void ReadSettings(object sender, EventArgs e)
         {
             const string bCannyHighTh = "CannyHighTh";
             const string bCannyLowTL = "CannyLowTL";
@@ -810,7 +759,7 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else if (line.Contains(bDescCorrelation))
                     {
-                        DescCorrelation = double.Parse(line.Substring(line.IndexOf(' ')));
+                        DescCorrelation = double.Parse(line.Substring(line.IndexOf(' ')+2));
                     }
                     else if (line.Contains(bDescPathToDesctiptors))
                     {
@@ -824,10 +773,6 @@ namespace CannyEdgeDetectionCSharp
                 }
             }
         }
-
-
-
-
 
 
 

@@ -163,7 +163,7 @@
             this.button3.TabIndex = 72;
             this.button3.Text = "Comparsion";
             this.button3.UseVisualStyleBackColor = true;
-            //this.button3.Click += new System.EventHandler(this.Step4Comparsion);
+            this.button3.Click += new System.EventHandler(this.Step4Comparsion);
             // 
             // openFileDialog1
             // 
@@ -200,6 +200,7 @@
             this.Name = "Mainform";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Распознавание изображения";
+            this.Load += new System.EventHandler(this.ReadSettings);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.CNMenuStrip.ResumeLayout(false);

@@ -127,7 +127,7 @@
             this.Correlation.Name = "Correlation";
             this.Correlation.Size = new System.Drawing.Size(43, 20);
             this.Correlation.TabIndex = 95;
-            this.Correlation.Text = "0,3";
+            this.Correlation.Text = "0.3";
             // 
             // label6
             // 
