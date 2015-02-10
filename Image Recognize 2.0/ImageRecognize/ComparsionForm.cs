@@ -92,29 +92,29 @@ namespace CannyEdgeDetectionCSharp
 
         private double equalTwoArrays(List<double> libAr, List<double> objAr)
         {
+            var difAr = new List<double>();
             var Sum1 = new List<double>();
-            for (var i = 2; i < objAr.Count; i++)
+            for (var i = 2; i < objAr.Count || libAr.Count <= 2; i++)
             {
-                if (libAr.Count > 2)
+                int address = 0;
+                var n = Double.PositiveInfinity;
+                var dif=double.PositiveInfinity;
+                for (var j = 2; j < libAr.Count; j++)
                 {
-                    int address = 0;
-                    var n = Double.PositiveInfinity;
-                    for (var j = 2; j < libAr.Count; j++)
+                    dif =
+                        Math.Abs(
+                            Math.Round(
+                                (libAr[j - 2] - objAr[i - 2]) + (libAr[j - 1] - objAr[i - 1]) +
+                                (libAr[j] - objAr[i]), 3));
+                    if (dif < n)
                     {
-                        var dif =
-                            Math.Abs(
-                                Math.Round(
-                                    (libAr[j - 2] - objAr[i - 2]) + (libAr[j - 1] - objAr[i - 1]) +
-                                    (libAr[j] - objAr[i]), 3));
-                        if (dif < n)
-                        {
-                            n = dif;
-                            address = j;
-                        }
+                        n = dif;
+                        address = j;
                     }
-                    libAr.Remove(libAr[address - 2]);
-                    Sum1.Add(n);
                 }
+                difAr.Add(dif);
+                libAr.Remove(libAr[address - 2]);
+                Sum1.Add(n);
             }
             return Sum1.Sum();
         }
