@@ -1,11 +1,17 @@
-﻿namespace CannyEdgeDetectionCSharp
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace CannyEdgeDetectionCSharp
 {
     partial class Mainform
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -28,12 +34,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.CNMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.selectFullImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CannyEdges = new System.Windows.Forms.PictureBox();
             this.BtnCannyEdgeDetect = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
@@ -44,48 +44,12 @@
             this.button3 = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button4 = new System.Windows.Forms.Button();
-            this.toolStrip1.SuspendLayout();
-            this.CNMenuStrip.SuspendLayout();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             ((System.ComponentModel.ISupportInitialize)(this.CannyEdges)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // toolStrip1
-            // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripLabel1});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(677, 25);
-            this.toolStrip1.TabIndex = 12;
-            this.toolStrip1.Text = "toolStrip1";
-            // 
-            // toolStripLabel1
-            // 
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(36, 22);
-            this.toolStripLabel1.Text = "Open";
-            this.toolStripLabel1.Click += new System.EventHandler(this.ClickOpen);
-            // 
-            // CNMenuStrip
-            // 
-            this.CNMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.selectFullImageToolStripMenuItem,
-            this.closeToolStripMenuItem});
-            this.CNMenuStrip.Name = "CNMenuStrip";
-            this.CNMenuStrip.Size = new System.Drawing.Size(164, 48);
-            // 
-            // selectFullImageToolStripMenuItem
-            // 
-            this.selectFullImageToolStripMenuItem.Name = "selectFullImageToolStripMenuItem";
-            this.selectFullImageToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
-            this.selectFullImageToolStripMenuItem.Text = "Select Full Image";
-            // 
-            // closeToolStripMenuItem
-            // 
-            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
-            this.closeToolStripMenuItem.Text = "Close";
             // 
             // CannyEdges
             // 
@@ -177,7 +141,24 @@
             this.button4.TabIndex = 73;
             this.button4.Text = "Settings";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.button4.Click += new System.EventHandler(this.Settings);
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(36, 22);
+            this.toolStripLabel1.Text = "Open";
+            this.toolStripLabel1.Click += new System.EventHandler(this.ClickOpen);
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel1});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(677, 25);
+            this.toolStrip1.TabIndex = 12;
+            this.toolStrip1.Text = "toolStrip1";
             // 
             // Mainform
             // 
@@ -201,11 +182,10 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Распознавание изображения";
             this.Load += new System.EventHandler(this.ReadSettings);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            this.CNMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.CannyEdges)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -213,21 +193,18 @@
 
         #endregion
 
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
-        private System.Windows.Forms.ContextMenuStrip CNMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem selectFullImageToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
-        private System.Windows.Forms.PictureBox CannyEdges;
-        private System.Windows.Forms.Button BtnCannyEdgeDetect;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Button button4;
+        private PictureBox CannyEdges;
+        private Button BtnCannyEdgeDetect;
+        private Label label7;
+        private Button button1;
+        private Button button2;
+        private PictureBox pictureBox1;
+        private Label label3;
+        private Button button3;
+        private OpenFileDialog openFileDialog1;
+        private Button button4;
+        private ToolStripLabel toolStripLabel1;
+        private ToolStrip toolStrip1;
     }
 }
 

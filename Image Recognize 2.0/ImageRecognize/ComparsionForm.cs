@@ -13,20 +13,38 @@ namespace CannyEdgeDetectionCSharp
 {
     public partial class ComparsionForm : Form
     {
+
         public ComparsionForm()
         {
             InitializeComponent();
         }
 
-        public Mainform main;
+        private Mainform main;
+        private int I;
 
-        public List<string> getAllFilesFromLibrary(string pathToLibrary)
+        public List<string> getAllDifferenceFilesFromLibrary(string pathToLibrary)
         {
             var filesList = new List<string>();
             var dirs = Directory.GetDirectories(pathToLibrary);
             foreach (var dir in dirs)
             {
                 var fileAddress = Directory.GetFiles(dir, "*_d.txt");
+                foreach (var filesPath in fileAddress)
+                {
+                    filesList.Add(filesPath);
+                }
+            }
+            return filesList;
+        }
+
+
+        public List<string> getALlImageFilesFromLibrary(string pathToLibrary)
+        {
+            var filesList = new List<string>();
+            var dirs = Directory.GetDirectories(pathToLibrary);
+            foreach (var dir in dirs)
+            {
+                var fileAddress = Directory.GetFiles(dir, "*_o.bmp");
                 foreach (var filesPath in fileAddress)
                 {
                     filesList.Add(filesPath);
@@ -47,64 +65,77 @@ namespace CannyEdgeDetectionCSharp
             return libAr;
         }
 
-        public void EqualWithSimmetry()
+        public void EqualWithSimmetry(List<double> currentObject)
         {
-            var ObjectAr = new List<double>();
-            foreach (var obj in main.differences)
-            {
-                foreach (var objects in getAllFilesFromLibrary(main.DescPathToLibrary))
+            var sourceObjectAr = new List<double[]>();
+            var fileList = getAllDifferenceFilesFromLibrary(main.DescPathToLibrary);
+
+                for(var i = 0; i<fileList.Count; i++)
                 {
-                    var libAr = GetOneDescFromLibrary(objects);
-                    equalTwoArraysWithSimmetry(obj, libAr);
+                    var libAr = GetOneDescFromLibrary(fileList[i]);
+                    sourceObjectAr.Add(new[] { equalTwoArrays(libAr, currentObject), i });
                 }
-            }
+
+            sourceObjectAr.Sort((a, b) => a[0].CompareTo(b[0]));
+            var imagesAr = getImagesFromEqualFunc(sourceObjectAr);
+            SetAndDrawPictureboxes(imagesAr);
         }
 
-        private double[] equalTwoArraysWithSimmetry(List<double> libAr, List<double> objAr)
+        public string[] getImagesFromEqualFunc(List<double[]> objectAr)
         {
-            var n = Double.PositiveInfinity;
+            var first = (int)objectAr[0][1];
+            var second = (int)objectAr[1][1];
+            var third = (int)objectAr[2][1];
+            var imagesAr = getALlImageFilesFromLibrary(main.DescPathToLibrary);
+            return new[] {imagesAr[first], imagesAr[second], imagesAr[third]};
+        }
+
+        private double equalTwoArrays(List<double> libAr, List<double> objAr)
+        {
             var Sum1 = new List<double>();
-            var Sum2 = new List<double>();
             for (var i = 2; i < objAr.Count; i++)
             {
-                for (var j = 2; j < libAr.Count; j++)
+                if (libAr.Count > 2)
                 {
-                    n = Double.PositiveInfinity;
-                    var dif = Math.Abs(Math.Round((libAr[j - 2] - objAr[i - 2]) + (libAr[j - 1] - objAr[i - 1]) + (libAr[j] - objAr[i]), 3));
-                    if (dif < n)
-                        n = dif;
+                    int address = 0;
+                    var n = Double.PositiveInfinity;
+                    for (var j = 2; j < libAr.Count; j++)
+                    {
+                        var dif =
+                            Math.Abs(
+                                Math.Round(
+                                    (libAr[j - 2] - objAr[i - 2]) + (libAr[j - 1] - objAr[i - 1]) +
+                                    (libAr[j] - objAr[i]), 3));
+                        if (dif < n)
+                        {
+                            n = dif;
+                            address = j;
+                        }
+                    }
+                    libAr.Remove(libAr[address - 2]);
+                    Sum1.Add(n);
                 }
-                Sum1.Add(n);
             }
-            n = Double.PositiveInfinity;
-            for (var i = 2; i < libAr.Count; i++)
-            {
-                for (var j = 2; j < objAr.Count; j++)
-                {
-                    n = Double.PositiveInfinity;
-                    var dif = Math.Abs(Math.Round((libAr[i - 2] - objAr[j - 2]) + (libAr[i - 1] - objAr[j - 1]) + (libAr[i] - objAr[j]), 3));
-                    if (dif < n)
-                        n = dif;
-                }
-                Sum2.Add(n);
-            }
-            return new []{Sum1.Sum(), Sum2.Sum()};
+            return Sum1.Sum();
         }
 
-        private
-            void ComparsionForm_Load(object sender, EventArgs e)
+        private void SetAndDrawPictureboxes(string[] imagesAr)
+        {
+
+            var bit = new Bitmap(imagesAr[0]);
+            pictureBox2.Image = bit;
+            bit = new Bitmap(imagesAr[1]);
+            pictureBox3.Image = bit;
+            bit = new Bitmap(imagesAr[2]);
+            pictureBox4.Image = bit;
+        }
+
+        private void ComparsionForm_Load(object sender, EventArgs e)
         {
             main = Owner as Mainform;
-            EqualWithSimmetry();
-            //pictureBox1.Image = new Bitmap(main.comparsionImg);
-            //pictureBox2.Image = new Bitmap(main.pathForComparsion);
-            //textBox1.Text = main.pathForComparsionTxt.ToString();
-            //pictureBox3.Image = new Bitmap(main.pathForComparsion2);
-            //textBox2.Text = main.pathForComparsionTxt2.ToString();
-            //pictureBox4.Image = new Bitmap(main.pathForComparsion3);
-            //textBox3.Text = main.pathForComparsionTxt3.ToString();
-            //pictureBox5.Image = main.bitForComparsion;
-
+            I = 0;
+            EqualWithSimmetry(main.descList[I].Difference);
+            pictureBox5.Image = main.getOnlyOneBitmap(main.descList[I].SourceCircuit);
         }
     }
 }

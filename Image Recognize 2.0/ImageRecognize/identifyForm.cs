@@ -21,82 +21,52 @@ namespace CannyEdgeDetectionCSharp
         }
 
         //private string _fileName;
-        public Mainform main;
+        private static Mainform Main;
         private int iterator;
 
         private void identifyForm_Load(object sender, EventArgs e)
         {
             var lines = File.ReadAllLines(@"buttons.txt");
-            main = Owner as Mainform;
+            Main = Owner as Mainform;
             foreach (var str in lines)
             {
                 var but = new Button();
                 AddButton(but, str);
-                if (!Directory.Exists(main.DescPathToLibrary + str))
+                if (!Directory.Exists(Main.DescPathToLibrary + str))
                 {
-                    Directory.CreateDirectory(main.DescPathToLibrary + str);
+                    Directory.CreateDirectory(Main.DescPathToLibrary + str);
                 }
             }
 
             draw();
         }
 
-
-        private List<int[]> MinAndMaxes(IEnumerable<List<double[]>> cloud)
-        {
-
-            double minx = double.PositiveInfinity, miny = double.PositiveInfinity, maxx = double.NegativeInfinity, maxy = double.NegativeInfinity;
-            foreach (var nPoints in cloud)
-            {
-                foreach (var point in nPoints)
-                {
-                    if (minx > point[0])
-                        minx = point[0];
-                    if (maxx < point[0])
-                        maxx = point[0];
-
-                    if (miny > point[1])
-                        miny = point[1];
-                    if (maxy < point[1])
-                        maxy = point[1];
-                }
-            }
-
-            return new List<int[]> { new[] { (int)minx, (int)miny }, new[] { (int)maxx, (int)maxy } };
-        }
-
         public void draw(string but)
         {
 
-            List<List<double[]>> currObject = main.AllApproximObjects[iterator];
-            var a = MinAndMaxes(currObject);
+            var currObject = Main.descList[iterator].SourceCircuit;
+            var a = Main.MinAndMaxes(currObject);
             Bitmap bit = new Bitmap(a[1][0] - a[0][0] + 2, a[1][1] - a[0][1] + 2);
-            foreach (var nPoints in currObject)
+            foreach (var point in currObject)
             {
-                foreach (var point in nPoints)
-                {
                     bit.SetPixel((int)point[0] - a[0][0], (int)point[1] - a[0][1], Color.Black);
-                }
             }
             pictureBox1.Image = bit;
-            pictureBox2.Image = new Bitmap(main.DescPathToDesctiptors+main._fileName+"\\"+iterator+".bmp");
-            bit.Save(main.DescPathToLibrary + but + "\\" + iterator + ".bmp");
+            pictureBox2.Image = new Bitmap(Main.DescPathToDesctiptors+Main.FileName+"\\"+iterator+".bmp");
+            bit.Save(Main.DescPathToLibrary + but + "\\" + iterator + ".bmp");
         }
 
         public void draw()
         {
-            List<List<double[]>> currObject = main.AllApproximObjects[iterator];
-            var a = MinAndMaxes(currObject);
+            var currObject = Main.descList[iterator].SourceCircuit;
+            var a = Main.MinAndMaxes(currObject);
             Bitmap bit = new Bitmap(a[1][0] - a[0][0] + 2, a[1][1] - a[0][1] + 2);
-            foreach (var nPoints in currObject)
+            foreach (var point in currObject)
             {
-                foreach (var point in nPoints)
-                {
                     bit.SetPixel((int)point[0] - a[0][0], (int)point[1] - a[0][1], Color.Black);
-                }
             }
             pictureBox1.Image = bit;
-            pictureBox2.Image = new Bitmap(main.DescPathToDesctiptors + main._fileName + "\\" + iterator + ".bmp");
+            pictureBox2.Image = new Bitmap(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator + ".bmp");
         }
 
 
@@ -117,13 +87,13 @@ namespace CannyEdgeDetectionCSharp
 
         private void button6_Click(object sender, EventArgs e)
         {
-            if (main.AllApproximObjects.Count == iterator)
+            if (Main.descList.Count == iterator)
             {
                 MessageBox.Show("Это был последний элемент");
                 return;
             }
             string newText = Interaction.InputBox("Введите название нового класса?", @"Новый класс", "");
-            Directory.CreateDirectory(main.DescPathToLibrary + newText);
+            Directory.CreateDirectory(Main.DescPathToLibrary + newText);
             AddButton(new Button(), newText);
             StreamWriter reader = new StreamWriter(@"buttons.txt", true);
             reader.Write(Environment.NewLine + newText);
@@ -141,16 +111,16 @@ namespace CannyEdgeDetectionCSharp
 
         private void ClickBut(object sender, EventArgs e)
         {
-            if (main.AllApproximObjects.Count == iterator)
+            if (Main.descList.Count == iterator)
             {
                 MessageBox.Show("Это был последний элемент");
                 return;
             }
             var value = ((Button)sender).Tag;
-            var fromDescriptor = ReadFolder(main.DescPathToDesctiptors);
-            if (File.Exists(main.DescPathToLibrary + main._fileName + "\\" + fromDescriptor[iterator]))
+            var fromDescriptor = ReadFolder(Main.DescPathToDesctiptors);
+            if (File.Exists(Main.DescPathToLibrary + Main.FileName + "\\" + fromDescriptor[iterator]))
             {
-                File.Delete(main.DescPathToLibrary + main._fileName + "\\" + fromDescriptor[iterator]);
+                File.Delete(Main.DescPathToLibrary + Main.FileName + "\\" + fromDescriptor[iterator]);
             }
             //if (File.Exists(@"\2\" + value + "\\" + main.Names[iterator][3]))
             //{
@@ -160,12 +130,12 @@ namespace CannyEdgeDetectionCSharp
             ////{
             ////    File.Delete(@"2\" + value + "\\" + main.Names[iterator][5]);
             ////}
-            File.Copy(main.DescPathToDesctiptors + main._fileName + "\\" + fromDescriptor[iterator], main.DescPathToLibrary + main._fileName + "\\" + fromDescriptor[iterator]);
+            File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + fromDescriptor[iterator], Main.DescPathToLibrary + Main.FileName + "\\" + fromDescriptor[iterator]);
             //File.Copy(main.Names[iterator][1], @"\2\" + value + "\\" + main.Names[iterator][3]);
             //File.Copy(main.Names[iterator][4], @"2\" + value + "\\" + main.Names[iterator][5]);
             draw(value.ToString());
             iterator++;
-            if (main.AllApproximObjects.Count == iterator)
+            if (Main.descList.Count == iterator)
             {
                 MessageBox.Show("Это был последний элемент");
                 return;
@@ -175,7 +145,7 @@ namespace CannyEdgeDetectionCSharp
 
         private List<string> ReadFolder(string path)
         {
-            var s = Directory.GetFiles(path + main._fileName, "*.bmp");
+            var s = Directory.GetFiles(path + Main.FileName, "*.bmp");
             return s.ToList();
         }
     }

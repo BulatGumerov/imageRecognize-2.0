@@ -57,6 +57,8 @@
             this.MaskSize = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.Sigma = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // button5
@@ -308,11 +310,32 @@
             this.Sigma.TabIndex = 112;
             this.Sigma.Text = "1";
             // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(9, 171);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(33, 13);
+            this.label16.TabIndex = 113;
+            this.label16.Text = "Other";
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(12, 202);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(82, 17);
+            this.checkBox1.TabIndex = 115;
+            this.checkBox1.Text = "Save circuit";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(407, 339);
+            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.label16);
             this.Controls.Add(this.Sigma);
             this.Controls.Add(this.label15);
             this.Controls.Add(this.MaskSize);
@@ -381,5 +404,7 @@
         private System.Windows.Forms.TextBox MaskSize;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox Sigma;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
