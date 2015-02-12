@@ -378,8 +378,8 @@ namespace CannyEdgeDetectionCSharp
 
 
 
-            var a = Math.Round((meanXy - meanX*meanY)/(meanSqrX - Math.Pow(meanX, 2)), 3);
-            var b = Math.Round(meanY - (a*meanX), 3);
+            var a = (meanXy - meanX*meanY)/(meanSqrX - Math.Pow(meanX, 2));
+            var b = meanY - a*meanX;
 
             if (Double.IsNaN(a))
             {
@@ -412,7 +412,7 @@ namespace CannyEdgeDetectionCSharp
                 downCor2 += Math.Pow(cloud[i][1] - meanY, 2);
             }
 
-            return upCor == 0 ? 1 : Math.Abs(Math.Round(upCor/Math.Sqrt(downCor1*downCor2), 3));
+            return upCor == 0 ? 1 : Math.Abs(upCor/Math.Sqrt(downCor1*downCor2));
         }
 
 
@@ -511,9 +511,9 @@ namespace CannyEdgeDetectionCSharp
             {
                 var regressionNext = get_regression(obj[i]);
                 var regressionPrev = get_regression(obj[i - 1]);
-                differenceDescFile.WriteLine(Math.Round(Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]), 3));
+                differenceDescFile.WriteLine(Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]));
                 differences[differences.Count - 1].Add(
-                    Math.Round(Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]), 3));
+                    Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]));
             }
             differenceDescFile.Close();
 

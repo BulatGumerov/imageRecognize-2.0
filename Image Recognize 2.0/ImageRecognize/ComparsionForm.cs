@@ -102,10 +102,7 @@ namespace CannyEdgeDetectionCSharp
                     for (var j = 2; j < libAr.Count; j++)
                     {
                         var dif =
-                            Math.Abs(
-                                Math.Round(
-                                    (libAr[j - 2] - objAr[i - 2]) + (libAr[j - 1] - objAr[i - 1]) +
-                                    (libAr[j] - objAr[i]), 3));
+                            Math.Abs(Math.Abs(libAr[j - 2] - objAr[i - 2]) + Math.Abs(libAr[j - 1] - objAr[i - 1]) +Math.Abs(libAr[j] - objAr[i]));
                         if (dif < n)
                         {
                             n = dif;
