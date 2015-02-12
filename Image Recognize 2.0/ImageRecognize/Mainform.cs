@@ -45,7 +45,6 @@ namespace CannyEdgeDetectionCSharp
         public List<List<double[]>> TempArray = new List<List<double[]>>();
         private string _pathBmp;
         public List<double[]> resultArray;
-        public string pathForCircuit;
 
 
         public struct Description
@@ -90,18 +89,9 @@ namespace CannyEdgeDetectionCSharp
             }
         }
 
-        private string[] readFolder()
-        {
-            return Directory.GetFiles(@"C:\\triangle");
-        }
 
         private void Step1Canny(object sender, EventArgs e)
         {
-            var fold = readFolder();
-            foreach (var file in fold)
-            {
-                _inputImage = new Bitmap(file);
-
                 try
                 {
                     _cannyData = new Canny(_inputImage, CannyHighTh, CannyLowTL, CannyMaskSize, CannySigma);
@@ -124,8 +114,6 @@ namespace CannyEdgeDetectionCSharp
                     }
                 _beginPoint = GetMaxLength(_reducingList, ShapeCenter());
 
-                Step2Circuit(sender,e);
-            }
         }
 
 
@@ -156,7 +144,7 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else
                     {
-                        //MessageBox.Show(@"Сканирование завершено");
+                        MessageBox.Show(@"Сканирование завершено");
                         break;
                     }
                 }
@@ -499,14 +487,14 @@ namespace CannyEdgeDetectionCSharp
                     }
                 }
             }
-            _pathBmp = @"C:\\2\\triangle\\" + FileName + "\\" + I + "_b.bmp";
+            _pathBmp = DescPathToDesctiptors + FileName + "\\" + I + "_b.bmp";
             _approxBit.Save(_pathBmp);
         }
 
 
         private Description MakeDescriptions(List<List<double[]>> obj)
         {
-            var mainDescPath = @"C:\\2\\triangle\\" + FileName + "\\" + I + ".txt";
+            var mainDescPath = DescPathToDesctiptors + FileName + "\\" + I + ".txt";
             var mainDescFile = new StreamWriter(mainDescPath);
             foreach (var cloud in obj)
             {
@@ -516,7 +504,7 @@ namespace CannyEdgeDetectionCSharp
             }
             mainDescFile.Close();
 
-            var differenceDescPath = @"C:\\2\\triangle\\" + FileName + "\\" + I + "_d.txt";
+            var differenceDescPath = DescPathToDesctiptors + FileName + "\\" + I + "_d.txt";
             var differenceDescFile = new StreamWriter(differenceDescPath);
             differences.Add(new List<double>());
             for (var i = 1; i < obj.Count; i++)
@@ -540,8 +528,8 @@ namespace CannyEdgeDetectionCSharp
         {
             if (Directory.Exists(DescPathToDesctiptors + FileName))
             {
-                //MessageBox.Show(
-                //    @"Папка с таким названием уже существует. Прекратите выполнение программы и измените название входного файла, иначе выходные файлы будут перезаписаны.");
+                MessageBox.Show(
+                    @"Папка с таким названием уже существует. Прекратите выполнение программы и измените название входного файла, иначе выходные файлы будут перезаписаны.");
             }
             else
                 Directory.CreateDirectory(DescPathToDesctiptors + FileName);
@@ -584,7 +572,7 @@ namespace CannyEdgeDetectionCSharp
             {
                 bit.SetPixel((int)point[0] - a[0][0], (int)point[1] - a[0][1], Color.Black);
             }
-            bit.Save(@"C:\\2\\triangle\\" + FileName + "\\" + I + "_o.bmp");
+            bit.Save(DescPathToDesctiptors + FileName + "\\" + I + "_o.bmp");
         }
 
         public Bitmap getOnlyOneBitmap(List<double[]> obj)
@@ -651,11 +639,11 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else if (line.Contains(bDescCorrelation))
                     {
-                        DescCorrelation = Double.Parse(line.Substring(line.IndexOf(' ')+2));
+                        DescCorrelation = Double.Parse(line.Substring(line.IndexOf(' ') + 2));
                     }
                     else if (line.Contains(bDescPathToDesctiptors))
                     {
-                        DescPathToDesctiptors = line.Substring(line.IndexOf(' ')+2);
+                        DescPathToDesctiptors = line.Substring(line.IndexOf(' ') + 1);
                     }
                     else if (line.Contains(bDescPathToLibrary))
                     {
