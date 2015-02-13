@@ -92,11 +92,12 @@ namespace CannyEdgeDetectionCSharp
 
         private string[] readFolder()
         {
-            return Directory.GetFiles(@"C:\\triangle");
+            return Directory.GetFiles(@"C:\\ellipse");
         }
 
         private void Step1Canny(object sender, EventArgs e)
         {
+            FileName = "test";
             var fold = readFolder();
             foreach (var file in fold)
             {
@@ -478,14 +479,14 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else if (Math.Abs(a) > 1 && Math.Abs(a) < 10)
                     {
-                        for (int i = ymin; i <= ymax; i++)
+                        for (int i = ymin; i < ymax; i++)
                         {
-                            int number = Convert.ToInt32(-b/a + i/a);
-                            if (number >= _inputImage.Width)
-                            {
-                                number = _inputImage.Width - 1;
-                            }
-                            _approxBit.SetPixel(number, i, Color.Red);
+                                int number = Convert.ToInt32(-b/a + i/a);
+                                if (number >= _inputImage.Width)
+                                {
+                                    number = _inputImage.Width - 1;
+                                }
+                                _approxBit.SetPixel(number, i, Color.Red);
                         }
                     }
                     else
@@ -497,14 +498,14 @@ namespace CannyEdgeDetectionCSharp
                     }
                 }
             }
-            _pathBmp = @"C:\\2\\triangle" + FileName + "\\" + I + "_b.bmp";
+            _pathBmp = @"C:\2\ellipse\" + I + "_b.bmp";
             _approxBit.Save(_pathBmp);
         }
 
 
         private Description MakeDescriptions(List<List<double[]>> obj)
         {
-            var mainDescPath = @"C:\\2\\triangle" + FileName + "\\" + I + ".txt";
+            var mainDescPath = @"C:\2\ellipse\" + I + ".txt";
             var mainDescFile = new StreamWriter(mainDescPath);
             foreach (var cloud in obj)
             {
@@ -514,7 +515,7 @@ namespace CannyEdgeDetectionCSharp
             }
             mainDescFile.Close();
 
-            var differenceDescPath = @"C:\\2\\triangle" + FileName + "\\" + I + "_d.txt";
+            var differenceDescPath = @"C:\2\ellipse\" + I + "_d.txt";
             var differenceDescFile = new StreamWriter(differenceDescPath);
             differences.Add(new List<double>());
             for (var i = 1; i < obj.Count; i++)
@@ -582,7 +583,7 @@ namespace CannyEdgeDetectionCSharp
             {
                 bit.SetPixel((int)point[0] - a[0][0], (int)point[1] - a[0][1], Color.Black);
             }
-            bit.Save(@"C:\\2\\triangle" + FileName + "\\" + I + "_o.bmp");
+            bit.Save(@"C:\2\ellipse\" + I + "_o.bmp");
         }
 
         public Bitmap getOnlyOneBitmap(List<double[]> obj)
@@ -653,7 +654,7 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else if (line.Contains(bDescPathToDesctiptors))
                     {
-                        DescPathToDesctiptors = line.Substring(line.IndexOf(' ')+2);
+                        DescPathToDesctiptors = line.Substring(line.IndexOf(' ')+1);
                     }
                     else if (line.Contains(bDescPathToLibrary))
                     {
