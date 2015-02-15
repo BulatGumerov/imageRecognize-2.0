@@ -22,7 +22,7 @@ namespace CannyEdgeDetectionCSharp
         private Mainform main;
         private int I;
 
-        public List<string> getAllDifferenceFilesFromLibrary(string pathToLibrary)
+        private static List<string> GetAllDifferenceFilesFromLibrary(string pathToLibrary)
         {
             var filesList = new List<string>();
             var dirs = Directory.GetDirectories(pathToLibrary);
@@ -38,7 +38,7 @@ namespace CannyEdgeDetectionCSharp
         }
 
 
-        public List<string> getALlImageFilesFromLibrary(string pathToLibrary)
+        private static List<string> GetALlImageFilesFromLibrary(string pathToLibrary)
         {
             var filesList = new List<string>();
             var dirs = Directory.GetDirectories(pathToLibrary);
@@ -53,7 +53,7 @@ namespace CannyEdgeDetectionCSharp
             return filesList;
         }
 
-        public List<double> GetOneDescFromLibrary(string path)
+        private static List<double> GetOneDescFromLibrary(string path)
         {
             var libAr = new List<double>();
             string dbls;
@@ -65,32 +65,36 @@ namespace CannyEdgeDetectionCSharp
             return libAr;
         }
 
-        public void EqualWithSimmetry(List<double> currentObject)
+        private void EqualWithSimmetry(List<double> currentObject)
         {
             var sourceObjectAr = new List<double[]>();
-            var fileList = getAllDifferenceFilesFromLibrary(main.DescPathToLibrary);
+            var fileList = GetAllDifferenceFilesFromLibrary(main.DescPathToLibrary);
 
                 for(var i = 0; i<fileList.Count; i++)
                 {
                     var libAr = GetOneDescFromLibrary(fileList[i]);
-                    sourceObjectAr.Add(new[] { equalTwoArrays(libAr, currentObject), i });
+                    if (Math.Abs(libAr.Count - currentObject.Count) <= main.OtherDifferenceBetweenTwoArrays)
+                    {
+                        sourceObjectAr.Add(new[] {EqualTwoArrays(libAr, currentObject), i});
+                    }
                 }
 
             sourceObjectAr.Sort((a, b) => a[0].CompareTo(b[0]));
-            var imagesAr = getImagesFromEqualFunc(sourceObjectAr);
+            var imagesAr = GetImagesFromEqualFunc(sourceObjectAr);
             SetAndDrawPictureboxes(imagesAr);
+            SetTextboxDifferences(sourceObjectAr);
         }
 
-        public string[] getImagesFromEqualFunc(List<double[]> objectAr)
+        private string[] GetImagesFromEqualFunc(List<double[]> objectAr)
         {
             var first = (int)objectAr[0][1];
             var second = (int)objectAr[1][1];
             var third = (int)objectAr[2][1];
-            var imagesAr = getALlImageFilesFromLibrary(main.DescPathToLibrary);
+            var imagesAr = GetALlImageFilesFromLibrary(main.DescPathToLibrary);
             return new[] {imagesAr[first], imagesAr[second], imagesAr[third]};
         }
 
-        private double equalTwoArrays(List<double> libAr, List<double> objAr)
+        private static double EqualTwoArrays(List<double> libAr, List<double> objAr)
         {
             var Sum1 = new List<double>();
             for (var i = 2; i < objAr.Count; i++)
@@ -127,12 +131,20 @@ namespace CannyEdgeDetectionCSharp
             pictureBox4.Image = bit;
         }
 
+        private void SetTextboxDifferences(List<double[]> sourceObjectAr)
+        {
+            textBox1.Text = sourceObjectAr[0][0].ToString();
+            textBox2.Text = sourceObjectAr[1][0].ToString();
+            textBox3.Text = sourceObjectAr[2][0].ToString();
+        }
+
         private void ComparsionForm_Load(object sender, EventArgs e)
         {
             main = Owner as Mainform;
             I = 0;
             EqualWithSimmetry(main.descList[I].Difference);
             pictureBox5.Image = main.getOnlyOneBitmap(main.descList[I].SourceCircuit);
+            pictureBox1.Image = new Bitmap(main.descList[I].PathToImage);
         }
     }
 }

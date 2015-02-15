@@ -66,7 +66,7 @@ namespace CannyEdgeDetectionCSharp
                     bit.SetPixel((int)point[0] - a[0][0], (int)point[1] - a[0][1], Color.Black);
             }
             pictureBox1.Image = bit;
-            pictureBox2.Image = new Bitmap(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator +"_o" + ".bmp");
+            pictureBox2.Image = new Bitmap(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator +"_b" + ".bmp");
         }
 
 

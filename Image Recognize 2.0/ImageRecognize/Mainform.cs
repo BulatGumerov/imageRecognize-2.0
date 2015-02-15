@@ -29,6 +29,7 @@ namespace CannyEdgeDetectionCSharp
         private int DescPointsCountInsideSegment;
         public string DescPathToDesctiptors;
         public string DescPathToLibrary;
+        public int OtherDifferenceBetweenTwoArrays;
 
         
         public List<List<double>> differences;
@@ -599,6 +600,7 @@ namespace CannyEdgeDetectionCSharp
             const string bDescCorrelation = "DescCorrelation";
             const string bDescPathToDesctiptors = "DescPathToDesctiptors";
             const string bDescPathToLibrary = "DescPathToLibrary";
+            const string bOtherDifferenceBetweenTwoArrays = "OtherDifferenceBetweenTwoArrays";
 
             using (var sr = new StreamReader("Settings.txt"))
             {
@@ -607,39 +609,39 @@ namespace CannyEdgeDetectionCSharp
                     var line = sr.ReadLine();
                     if (line.Contains(bCannyHighTh))
                     {
-                        CannyHighTh = Single.Parse(line.Substring(line.IndexOf(' ')));
+                        CannyHighTh = Single.Parse(line.Substring(line.IndexOf(' '))+1);
                     }
                     else if (line.Contains(bCannyLowTL))
                     {
-                        CannyLowTL = Single.Parse(line.Substring(line.IndexOf(' ')));
+                        CannyLowTL = Single.Parse(line.Substring(line.IndexOf(' '))+1);
                     }
                     else if (line.Contains(bCannyMaskSize))
                     {
-                        CannyMaskSize = Int32.Parse(line.Substring(line.IndexOf(' ')));
+                        CannyMaskSize = Int32.Parse(line.Substring(line.IndexOf(' '))+1);
                     }
                     else if (line.Contains(bCannySigma))
                     {
-                        CannySigma = Single.Parse(line.Substring(line.IndexOf(' ')));
+                        CannySigma = Single.Parse(line.Substring(line.IndexOf(' '))+1);
                     }
                     else if (line.Contains(bDescLengthBetweenObjects))
                     {
-                        DescLengthBetweenObjects = Int32.Parse(line.Substring(line.IndexOf(' ')));
+                        DescLengthBetweenObjects = Int32.Parse(line.Substring(line.IndexOf(' '))+1);
                     }
                     else if (line.Contains(bDescLengthInsideObject))
                     {
-                        DescLengthInsideObject = Int32.Parse(line.Substring(line.IndexOf(' ')));
+                        DescLengthInsideObject = Int32.Parse(line.Substring(line.IndexOf(' '))+1);
                     }
                     else if (line.Contains(bDescPointsCountInsideSegment))
                     {
-                        DescPointsCountInsideSegment = Int32.Parse(line.Substring(line.IndexOf(' ')));
+                        DescPointsCountInsideSegment = Int32.Parse(line.Substring(line.IndexOf(' '))+1);
                     }
                     else if (line.Contains(bDescMinSegmentsCount))
                     {
-                        DescMinSegmentsCount = Int32.Parse(line.Substring(line.IndexOf(' ')));
+                        DescMinSegmentsCount = Int32.Parse(line.Substring(line.IndexOf(' '))+1);
                     }
                     else if (line.Contains(bDescCorrelation))
                     {
-                        DescCorrelation = Double.Parse(line.Substring(line.IndexOf(' ') + 2));
+                        DescCorrelation = Double.Parse(line.Substring(line.IndexOf(' ') + 1));
                     }
                     else if (line.Contains(bDescPathToDesctiptors))
                     {
@@ -647,7 +649,11 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else if (line.Contains(bDescPathToLibrary))
                     {
-                        DescPathToLibrary = line.Substring(line.IndexOf(' '));
+                        DescPathToLibrary = line.Substring(line.IndexOf(' ')+1);
+                    }
+                    else if (line.Contains(bOtherDifferenceBetweenTwoArrays))
+                    {
+                        OtherDifferenceBetweenTwoArrays = Int32.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else MessageBox.Show("error" + line);
                 }
