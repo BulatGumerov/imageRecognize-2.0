@@ -99,8 +99,7 @@ namespace CannyEdgeDetectionCSharp
                     CannyEdges.Image = _cannyData.DisplayImage(_cannyData.EdgeMap);
 
                     CheckCreateDirectories();
-                    //pathForCircuit = DescPathToDesctiptors + _fileName+"\\circuit.bmp";
-                    //new Bitmap(CannyEdges.Image).Save(@pathForCircuit);
+                    //new Bitmap(CannyEdges.Image).Save(DescPathToDesctiptors + FileName + "\\circuit.bmp");
                 }
                 catch (NullReferenceException)
                 {
@@ -113,7 +112,9 @@ namespace CannyEdgeDetectionCSharp
                         if (_cannyData.EdgeMap[i, j] > 0)
                             _reducingList.Add(new[] {i, (double) j});
                     }
-                _beginPoint = GetMaxLength(_reducingList, ShapeCenter());
+                //_beginPoint = GetMaxLength(_reducingList, ShapeCenter());
+            var rand = new Random();
+            _beginPoint = _reducingList[rand.Next(0, _reducingList.Count)];
 
         }
 
@@ -283,10 +284,13 @@ namespace CannyEdgeDetectionCSharp
                     }
                 }
                 TempArray.Clear();
-                objectsMassive.Add(new List<double[]>());
-                foreach (var t in resultArray)
+                if (Correlation(resultArray) >= DescCorrelation)
                 {
-                    objectsMassive[objectsMassive.Count - 1].Add(t);
+                    objectsMassive.Add(new List<double[]>());
+                    foreach (var t in resultArray)
+                    {
+                        objectsMassive[objectsMassive.Count - 1].Add(t);
+                    }
                 }
                 _nextPoint = new[] {resultArray[resultArray.Count - 1][0], resultArray[resultArray.Count - 1][1]};
                 resultArray.Clear();
@@ -500,7 +504,7 @@ namespace CannyEdgeDetectionCSharp
             foreach (var cloud in obj)
             {
                 var regression = get_regression(cloud);
-                mainDescFile.WriteLine(@"корреляция=" + Correlation(cloud) + " a=" + regression[0] + " b=" + regression[1]);
+                mainDescFile.WriteLine(@"корреляция=" + Correlation(cloud) + " a=" + Math.Atan(regression[0])*57.3 + " b=" + regression[1]);
 
             }
             mainDescFile.Close();
@@ -512,7 +516,7 @@ namespace CannyEdgeDetectionCSharp
             {
                 var regressionNext = get_regression(obj[i]);
                 var regressionPrev = get_regression(obj[i - 1]);
-                differenceDescFile.WriteLine(Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]));
+                differenceDescFile.WriteLine((Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]))*57.3);
                 differences[differences.Count - 1].Add(
                     Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]));
             }
@@ -609,35 +613,35 @@ namespace CannyEdgeDetectionCSharp
                     var line = sr.ReadLine();
                     if (line.Contains(bCannyHighTh))
                     {
-                        CannyHighTh = Single.Parse(line.Substring(line.IndexOf(' '))+1);
+                        CannyHighTh = Single.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bCannyLowTL))
                     {
-                        CannyLowTL = Single.Parse(line.Substring(line.IndexOf(' '))+1);
+                        CannyLowTL = Single.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bCannyMaskSize))
                     {
-                        CannyMaskSize = Int32.Parse(line.Substring(line.IndexOf(' '))+1);
+                        CannyMaskSize = Int32.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bCannySigma))
                     {
-                        CannySigma = Single.Parse(line.Substring(line.IndexOf(' '))+1);
+                        CannySigma = Single.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bDescLengthBetweenObjects))
                     {
-                        DescLengthBetweenObjects = Int32.Parse(line.Substring(line.IndexOf(' '))+1);
+                        DescLengthBetweenObjects = Int32.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bDescLengthInsideObject))
                     {
-                        DescLengthInsideObject = Int32.Parse(line.Substring(line.IndexOf(' '))+1);
+                        DescLengthInsideObject = Int32.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bDescPointsCountInsideSegment))
                     {
-                        DescPointsCountInsideSegment = Int32.Parse(line.Substring(line.IndexOf(' '))+1);
+                        DescPointsCountInsideSegment = Int32.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bDescMinSegmentsCount))
                     {
-                        DescMinSegmentsCount = Int32.Parse(line.Substring(line.IndexOf(' '))+1);
+                        DescMinSegmentsCount = Int32.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bDescCorrelation))
                     {
@@ -645,11 +649,11 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else if (line.Contains(bDescPathToDesctiptors))
                     {
-                        DescPathToDesctiptors = line.Substring(line.IndexOf(' ') + 1);
+                        DescPathToDesctiptors = line.Substring(line.IndexOf(' ') + 2);
                     }
                     else if (line.Contains(bDescPathToLibrary))
                     {
-                        DescPathToLibrary = line.Substring(line.IndexOf(' ')+1);
+                        DescPathToLibrary = line.Substring(line.IndexOf(' ') + 2);
                     }
                     else if (line.Contains(bOtherDifferenceBetweenTwoArrays))
                     {
