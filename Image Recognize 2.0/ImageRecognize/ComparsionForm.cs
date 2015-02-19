@@ -80,6 +80,12 @@ namespace CannyEdgeDetectionCSharp
                 }
 
             sourceObjectAr.Sort((a, b) => a[0].CompareTo(b[0]));
+            if (sourceObjectAr.Count <= 2)
+            {
+                MessageBox.Show(
+                    @"В библиотеке меньше 3 изображений, вначале добавьте в библиотеку как минимум 3 изображения");
+                return;
+            }
             var imagesAr = GetImagesFromEqualFunc(sourceObjectAr);
             SetAndDrawPictureboxes(imagesAr);
             SetTextboxDifferences(sourceObjectAr);
@@ -142,6 +148,16 @@ namespace CannyEdgeDetectionCSharp
         {
             main = Owner as Mainform;
             I = 0;
+            if (main.descList == null)
+            {
+                MessageBox.Show(@"Вначале обработайте изображение");
+                return;
+            }
+            if (main.descList.Count == 0)
+            {
+                MessageBox.Show(@"Вначале обработайте изображение");
+                return;
+            }
             EqualWithSimmetry(main.descList[I].Difference);
             pictureBox5.Image = main.getOnlyOneBitmap(main.descList[I].SourceCircuit);
             pictureBox1.Image = new Bitmap(main.descList[I].PathToImage);

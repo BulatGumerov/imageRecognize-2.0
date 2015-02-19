@@ -41,20 +41,6 @@ namespace CannyEdgeDetectionCSharp
             draw();
         }
 
-        public void draw(string but)
-        {
-
-            var currObject = Main.descList[iterator].SourceCircuit;
-            var a = Main.MinAndMaxes(currObject);
-            Bitmap bit = new Bitmap(a[1][0] - a[0][0] + 2, a[1][1] - a[0][1] + 2);
-            foreach (var point in currObject)
-            {
-                    bit.SetPixel((int)point[0] - a[0][0], (int)point[1] - a[0][1], Color.Black);
-            }
-            pictureBox1.Image = bit;
-            pictureBox2.Image = new Bitmap(Main.DescPathToDesctiptors+Main.FileName+"\\"+iterator+".bmp");
-            bit.Save(Main.DescPathToLibrary + but + "\\" + iterator + ".bmp");
-        }
 
         public void draw()
         {
@@ -130,10 +116,13 @@ namespace CannyEdgeDetectionCSharp
             ////{
             ////    File.Delete(@"2\" + value + "\\" + main.Names[iterator][5]);
             ////}
-            File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + fromDescriptor[iterator], Main.DescPathToLibrary + Main.FileName + "\\" + fromDescriptor[iterator]);
+            File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator + ".txt", Main.DescPathToLibrary + value + "\\" + iterator + ".txt");
+            File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator + "_d.txt", Main.DescPathToLibrary + value + "\\" + iterator + "_d.txt");
+            File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator + "_b.bmp", Main.DescPathToLibrary + value + "\\" + iterator + "_b.bmp");
+            File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator + "_o.bmp", Main.DescPathToLibrary + value + "\\" + iterator + "_o.bmp");
             //File.Copy(main.Names[iterator][1], @"\2\" + value + "\\" + main.Names[iterator][3]);
             //File.Copy(main.Names[iterator][4], @"2\" + value + "\\" + main.Names[iterator][5]);
-            draw(value.ToString());
+            draw();
             iterator++;
             if (Main.descList.Count == iterator)
             {

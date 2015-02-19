@@ -126,6 +126,12 @@ namespace CannyEdgeDetectionCSharp
 
             descList = new List<Description>();
 
+            if (_reducingList.Count == 0)
+            {
+                MessageBox.Show(@"Вначале необходимо оконтурить изображениеи");
+                return;
+            }
+
             try
             {
                 while (true)
