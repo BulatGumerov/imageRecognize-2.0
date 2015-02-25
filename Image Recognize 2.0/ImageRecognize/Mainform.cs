@@ -522,7 +522,7 @@ namespace CannyEdgeDetectionCSharp
             {
                 var regressionNext = get_regression(obj[i]);
                 var regressionPrev = get_regression(obj[i - 1]);
-                differenceDescFile.WriteLine(Math.Round(Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]), 3));
+                differenceDescFile.WriteLine(Math.Round(Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0])*57.3, 3));
                 differences[differences.Count - 1].Add(
                     Math.Round(Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]), 3));
             }
