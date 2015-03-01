@@ -104,11 +104,12 @@ namespace CannyEdgeDetectionCSharp
                 _inputImage = new Bitmap(file);
                 try
                 {
+                    //var filen = file.Substring(file.Length-13, file.)
                     _cannyData = new Canny(_inputImage, CannyHighTh, CannyLowTL, CannyMaskSize, CannySigma);
                     CannyEdges.Image = _cannyData.DisplayImage(_cannyData.EdgeMap);
 
                     CheckCreateDirectories();
-                    pathForCircuit = @"C:\2\ellipse\" + I + "_c.bmp";
+                    pathForCircuit = @"C:\2\ellipse\" + I +"_" + file.Substring(19);
                     new Bitmap(CannyEdges.Image).Save(@pathForCircuit);
                 }
                 catch (NullReferenceException)
