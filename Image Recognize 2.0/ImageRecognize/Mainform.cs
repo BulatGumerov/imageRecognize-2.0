@@ -108,8 +108,8 @@ namespace CannyEdgeDetectionCSharp
                     CannyEdges.Image = _cannyData.DisplayImage(_cannyData.EdgeMap);
 
                     CheckCreateDirectories();
-                    //pathForCircuit = DescPathToDesctiptors + _fileName+"\\circuit.bmp";
-                    //new Bitmap(CannyEdges.Image).Save(@pathForCircuit);
+                    pathForCircuit = @"C:\2\ellipse\" + I + "_c.bmp";
+                    new Bitmap(CannyEdges.Image).Save(@pathForCircuit);
                 }
                 catch (NullReferenceException)
                 {
@@ -658,7 +658,7 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else if (line.Contains(bDescPathToLibrary))
                     {
-                        DescPathToLibrary = line.Substring(line.IndexOf(' '));
+                        DescPathToLibrary = line.Substring(line.IndexOf(' ')+1);
                     }
                     else MessageBox.Show("error" + line);
                 }
