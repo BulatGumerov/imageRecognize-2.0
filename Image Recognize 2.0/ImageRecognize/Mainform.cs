@@ -18,15 +18,15 @@ namespace CannyEdgeDetectionCSharp
         }
 
         //settings
-        private float CannyHighTh;
-        private float CannyLowTL;
-        private int CannyMaskSize;
-        private float CannySigma;
-        private int DescLengthBetweenObjects;
-        private int DescLengthInsideObject;
-        private int DescMinSegmentsCount;
-        private double DescCorrelation;
-        private int DescPointsCountInsideSegment;
+        public float CannyHighTh;
+        public float CannyLowTL;
+        public int CannyMaskSize;
+        public float CannySigma;
+        public int DescLengthBetweenObjects;
+        public int DescLengthInsideObject;
+        public int DescMinSegmentsCount;
+        public double DescCorrelation;
+        public int DescPointsCountInsideSegment;
         public string DescPathToDesctiptors;
         public string DescPathToLibrary;
         public int OtherDifferenceBetweenTwoArrays;
@@ -90,16 +90,25 @@ namespace CannyEdgeDetectionCSharp
             }
         }
 
+        private string[] readFolder()
+        {
+            return Directory.GetFiles(@"C:\\ellipse");
+        }
 
         private void Step1Canny(object sender, EventArgs e)
         {
+
+            var fold = readFolder();
+            foreach (var file in fold)
+            {
+                _inputImage = new Bitmap(file);
                 try
                 {
                     _cannyData = new Canny(_inputImage, CannyHighTh, CannyLowTL, CannyMaskSize, CannySigma);
                     CannyEdges.Image = _cannyData.DisplayImage(_cannyData.EdgeMap);
 
                     CheckCreateDirectories();
-                    //new Bitmap(CannyEdges.Image).Save(DescPathToDesctiptors + FileName + "\\circuit.bmp");
+                    new Bitmap(CannyEdges.Image).Save(@"C:\2\ellipse\" + I + "_" + file.Substring(19));
                 }
                 catch (NullReferenceException)
                 {
@@ -113,9 +122,10 @@ namespace CannyEdgeDetectionCSharp
                             _reducingList.Add(new[] {i, (double) j});
                     }
                 //_beginPoint = GetMaxLength(_reducingList, ShapeCenter());
-            var rand = new Random();
-            _beginPoint = _reducingList[rand.Next(0, _reducingList.Count)];
-
+                var rand = new Random();
+                _beginPoint = _reducingList[rand.Next(0, _reducingList.Count)];
+                Step2Circuit(sender, e);
+            }
         }
 
 
@@ -152,7 +162,7 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else
                     {
-                        MessageBox.Show(@"Сканирование завершено");
+                        //MessageBox.Show(@"Сканирование завершено");
                         break;
                     }
                 }
@@ -498,14 +508,14 @@ namespace CannyEdgeDetectionCSharp
                     }
                 }
             }
-            _pathBmp = DescPathToDesctiptors + FileName + "\\" + I + "_b.bmp";
+            _pathBmp = @"C:\2\ellipse\" + I + "_a.bmp";
             _approxBit.Save(_pathBmp);
         }
 
 
         private Description MakeDescriptions(List<List<double[]>> obj)
         {
-            var mainDescPath = DescPathToDesctiptors + FileName + "\\" + I + ".txt";
+            var mainDescPath = @"C:\2\ellipse\" + I + "_c.txt";
             var mainDescFile = new StreamWriter(mainDescPath);
             foreach (var cloud in obj)
             {
@@ -515,7 +525,7 @@ namespace CannyEdgeDetectionCSharp
             }
             mainDescFile.Close();
 
-            var differenceDescPath = DescPathToDesctiptors + FileName + "\\" + I + "_d.txt";
+            var differenceDescPath = @"C:\2\ellipse\" + I + "_d.txt";
             var differenceDescFile = new StreamWriter(differenceDescPath);
             differences.Add(new List<double>());
             for (var i = 1; i < obj.Count; i++)
@@ -539,8 +549,8 @@ namespace CannyEdgeDetectionCSharp
         {
             if (Directory.Exists(DescPathToDesctiptors + FileName))
             {
-                MessageBox.Show(
-                    @"Папка с таким названием уже существует. Прекратите выполнение программы и измените название входного файла, иначе выходные файлы будут перезаписаны.");
+                //MessageBox.Show(
+                //    @"Папка с таким названием уже существует. Прекратите выполнение программы и измените название входного файла, иначе выходные файлы будут перезаписаны.");
             }
             else
                 Directory.CreateDirectory(DescPathToDesctiptors + FileName);

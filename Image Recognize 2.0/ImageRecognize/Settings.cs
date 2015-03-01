@@ -18,8 +18,11 @@ namespace CannyEdgeDetectionCSharp
             InitializeComponent();
         }
 
+        private static Mainform Main;
+
         private void button1_Click(object sender, EventArgs e)
         {
+            Main = Owner as Mainform;
             if (File.Exists("Settings.txt"))
             {
                 File.Delete("Settings.txt");
@@ -28,19 +31,32 @@ namespace CannyEdgeDetectionCSharp
             using (var file = new StreamWriter(@"Settings.txt"))
             {
                 file.WriteLine("CannyHighTh "+TH.Text);
+                Main.CannyHighTh = Single.Parse(TH.Text);
                 file.WriteLine("CannyLowTL "+TL.Text);
+                Main.CannyLowTL = Single.Parse(TL.Text);
                 file.WriteLine("CannyMaskSize " + MaskSize.Text);
+                Main.CannyMaskSize = Int32.Parse(MaskSize.Text);
                 file.WriteLine("CannySigma " + Sigma.Text);
+                Main.CannySigma = Single.Parse(Sigma.Text);
                 file.WriteLine("DescLengthBetweenObjects " + LengthBetweenObjects.Text);
+                Main.DescLengthBetweenObjects = Int32.Parse(LengthBetweenObjects.Text);
                 file.WriteLine("DescLengthInsideObject " + LengthInsideObject.Text);
+                Main.DescLengthInsideObject = Int32.Parse(LengthInsideObject.Text);
                 file.WriteLine("DescPointsCountInsideSegment " + PointsCountInsideSegment.Text);
+                Main.DescPointsCountInsideSegment = Int32.Parse(PointsCountInsideSegment.Text);
                 file.WriteLine("DescMinSegmentsCount " + MinSegmentsCount.Text);
+                Main.DescMinSegmentsCount = Int32.Parse(MinSegmentsCount.Text);
                 file.WriteLine("DescCorrelation " + Correlation.Text);
+                Main.DescCorrelation = Double.Parse(Correlation.Text);
                 file.WriteLine("DescPathToDesctiptors " + PathToDesctiptors.Text);
+                Main.DescPathToDesctiptors = PathToDesctiptors.Text;
                 file.WriteLine("DescPathToLibrary " + PathToLibrary.Text);
+                Main.DescPathToLibrary = PathToLibrary.Text;
                 file.WriteLine("OtherDifferenceBetweenTwoArrays" + OtherDifferenceBetweenTwoArrays.Text);
+                Main.OtherDifferenceBetweenTwoArrays = Int32.Parse(OtherDifferenceBetweenTwoArrays.Text);
                 file.Close();
             }
+            
         }
 
         private void Settings_Load(object sender, EventArgs e)
