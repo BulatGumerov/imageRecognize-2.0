@@ -593,7 +593,7 @@ namespace CannyEdgeDetectionCSharp
             {
                 bit.SetPixel((int)point[0] - a[0][0], (int)point[1] - a[0][1], Color.Black);
             }
-            bit.Save(DescPathToDesctiptors + FileName + "\\" + I + "_o.bmp");
+            bit.Save(@"C:\2\ellipse\" + I + "_o.bmp");
         }
 
         public Bitmap getOnlyOneBitmap(List<double[]> obj)

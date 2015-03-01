@@ -1,5 +1,5 @@
-CannyHighTh 460
-CannyLowTL 450
+CannyHighTh 450
+CannyLowTL 440
 CannyMaskSize 5
 CannySigma 1
 DescLengthBetweenObjects 10
