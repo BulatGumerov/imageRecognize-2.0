@@ -655,11 +655,11 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else if (line.Contains(bDescPathToDesctiptors))
                     {
-                        DescPathToDesctiptors = line.Substring(line.IndexOf(' ') + 2);
+                        DescPathToDesctiptors = line.Substring(line.IndexOf(' ') + 1);
                     }
                     else if (line.Contains(bDescPathToLibrary))
                     {
-                        DescPathToLibrary = line.Substring(line.IndexOf(' ') + 2);
+                        DescPathToLibrary = line.Substring(line.IndexOf(' ') + 1);
                     }
                     else if (line.Contains(bOtherDifferenceBetweenTwoArrays))
                     {
