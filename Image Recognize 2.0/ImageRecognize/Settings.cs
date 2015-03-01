@@ -38,6 +38,7 @@ namespace CannyEdgeDetectionCSharp
                 file.WriteLine("DescCorrelation " + Correlation.Text);
                 file.WriteLine("DescPathToDesctiptors " + PathToDesctiptors.Text);
                 file.WriteLine("DescPathToLibrary " + PathToLibrary.Text);
+                file.WriteLine("OtherDifferenceBetweenTwoArrays" + OtherDifferenceBetweenTwoArrays.Text);
                 file.Close();
             }
         }
@@ -55,6 +56,7 @@ namespace CannyEdgeDetectionCSharp
             const string bDescCorrelation = "DescCorrelation";
             const string bDescPathToDesctiptors = "DescPathToDesctiptors";
             const string bDescPathToLibrary = "DescPathToLibrary";
+            const string bOtherDifferenceBetweenTwoArrays = "OtherDifferenceBetweenTwoArrays";
 
             using (var sr = new StreamReader("Settings.txt"))
             {
@@ -104,6 +106,10 @@ namespace CannyEdgeDetectionCSharp
                     else if (line.Contains(bDescPathToLibrary))
                     {
                         PathToLibrary.Text = line.Substring(line.IndexOf(' '));
+                    }
+                    else if (line.Contains(bOtherDifferenceBetweenTwoArrays))
+                    {
+                        OtherDifferenceBetweenTwoArrays.Text = line.Substring(line.IndexOf(' '));
                     }
                     else MessageBox.Show("error" + line);
                 }

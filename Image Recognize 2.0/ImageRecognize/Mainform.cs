@@ -29,6 +29,7 @@ namespace CannyEdgeDetectionCSharp
         private int DescPointsCountInsideSegment;
         public string DescPathToDesctiptors;
         public string DescPathToLibrary;
+        public int OtherDifferenceBetweenTwoArrays;
 
         
         public List<List<double>> differences;
@@ -45,7 +46,6 @@ namespace CannyEdgeDetectionCSharp
         public List<List<double[]>> TempArray = new List<List<double[]>>();
         private string _pathBmp;
         public List<double[]> resultArray;
-        public string pathForCircuit;
 
 
         public struct Description
@@ -90,27 +90,16 @@ namespace CannyEdgeDetectionCSharp
             }
         }
 
-        private string[] readFolder()
-        {
-            return Directory.GetFiles(@"C:\\ellipse");
-        }
 
         private void Step1Canny(object sender, EventArgs e)
         {
-            FileName = "test";
-            var fold = readFolder();
-            foreach (var file in fold)
-            {
-                _inputImage = new Bitmap(file);
                 try
                 {
-                    //var filen = file.Substring(file.Length-13, file.)
                     _cannyData = new Canny(_inputImage, CannyHighTh, CannyLowTL, CannyMaskSize, CannySigma);
                     CannyEdges.Image = _cannyData.DisplayImage(_cannyData.EdgeMap);
 
                     CheckCreateDirectories();
-                    pathForCircuit = @"C:\2\ellipse\" + I +"_" + file.Substring(19);
-                    new Bitmap(CannyEdges.Image).Save(@pathForCircuit);
+                    //new Bitmap(CannyEdges.Image).Save(DescPathToDesctiptors + FileName + "\\circuit.bmp");
                 }
                 catch (NullReferenceException)
                 {
@@ -123,10 +112,9 @@ namespace CannyEdgeDetectionCSharp
                         if (_cannyData.EdgeMap[i, j] > 0)
                             _reducingList.Add(new[] {i, (double) j});
                     }
-                _beginPoint = GetMaxLength(_reducingList, ShapeCenter());
-
-                Step2Circuit(sender, e);
-            }
+                //_beginPoint = GetMaxLength(_reducingList, ShapeCenter());
+            var rand = new Random();
+            _beginPoint = _reducingList[rand.Next(0, _reducingList.Count)];
 
         }
 
@@ -137,6 +125,12 @@ namespace CannyEdgeDetectionCSharp
             differences = new List<List<double>>();
 
             descList = new List<Description>();
+
+            if (_reducingList.Count == 0)
+            {
+                MessageBox.Show(@"Вначале необходимо оконтурить изображениеи");
+                return;
+            }
 
             try
             {
@@ -158,7 +152,7 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else
                     {
-                        //MessageBox.Show(@"Сканирование завершено");
+                        MessageBox.Show(@"Сканирование завершено");
                         break;
                     }
                 }
@@ -175,6 +169,8 @@ namespace CannyEdgeDetectionCSharp
                     MessageBox.Show(@"Обработайте изображение");
                 }
             }
+
+            
         }
 
 
@@ -294,10 +290,13 @@ namespace CannyEdgeDetectionCSharp
                     }
                 }
                 TempArray.Clear();
-                objectsMassive.Add(new List<double[]>());
-                foreach (var t in resultArray)
+                if (Correlation(resultArray) >= DescCorrelation)
                 {
-                    objectsMassive[objectsMassive.Count - 1].Add(t);
+                    objectsMassive.Add(new List<double[]>());
+                    foreach (var t in resultArray)
+                    {
+                        objectsMassive[objectsMassive.Count - 1].Add(t);
+                    }
                 }
                 _nextPoint = new[] {resultArray[resultArray.Count - 1][0], resultArray[resultArray.Count - 1][1]};
                 resultArray.Clear();
@@ -390,8 +389,8 @@ namespace CannyEdgeDetectionCSharp
 
 
 
-            var a = Math.Round((meanXy - meanX*meanY)/(meanSqrX - Math.Pow(meanX, 2)), 3);
-            var b = Math.Round(meanY - (a*meanX), 3);
+            var a = (meanXy - meanX*meanY)/(meanSqrX - Math.Pow(meanX, 2));
+            var b = meanY - a*meanX;
 
             if (Double.IsNaN(a))
             {
@@ -424,7 +423,7 @@ namespace CannyEdgeDetectionCSharp
                 downCor2 += Math.Pow(cloud[i][1] - meanY, 2);
             }
 
-            return upCor == 0 ? 1 : Math.Abs(Math.Round(upCor/Math.Sqrt(downCor1*downCor2), 3));
+            return upCor == 0 ? 1 : Math.Abs(upCor/Math.Sqrt(downCor1*downCor2));
         }
 
 
@@ -480,14 +479,14 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else if (Math.Abs(a) > 1 && Math.Abs(a) < 10)
                     {
-                        for (int i = ymin; i < ymax; i++)
+                        for (int i = ymin; i <= ymax; i++)
                         {
-                                int number = Convert.ToInt32(-b/a + i/a);
-                                if (number >= _inputImage.Width)
-                                {
-                                    number = _inputImage.Width - 1;
-                                }
-                                _approxBit.SetPixel(number, i, Color.Red);
+                            int number = Convert.ToInt32(-b/a + i/a);
+                            if (number >= _inputImage.Width)
+                            {
+                                number = _inputImage.Width - 1;
+                            }
+                            _approxBit.SetPixel(number, i, Color.Red);
                         }
                     }
                     else
@@ -499,33 +498,33 @@ namespace CannyEdgeDetectionCSharp
                     }
                 }
             }
-            _pathBmp = @"C:\2\ellipse\" + I + "_b.bmp";
+            _pathBmp = DescPathToDesctiptors + FileName + "\\" + I + "_b.bmp";
             _approxBit.Save(_pathBmp);
         }
 
 
         private Description MakeDescriptions(List<List<double[]>> obj)
         {
-            var mainDescPath = @"C:\2\ellipse\" + I + ".txt";
+            var mainDescPath = DescPathToDesctiptors + FileName + "\\" + I + ".txt";
             var mainDescFile = new StreamWriter(mainDescPath);
             foreach (var cloud in obj)
             {
                 var regression = get_regression(cloud);
-                mainDescFile.WriteLine(@"корреляция=" + Correlation(cloud) + " a=" + regression[0] + " b=" + regression[1]);
+                mainDescFile.WriteLine(@"корреляция=" + Correlation(cloud) + " a=" + Math.Atan(regression[0])*57.3 + " b=" + regression[1]);
 
             }
             mainDescFile.Close();
 
-            var differenceDescPath = @"C:\2\ellipse\" + I + "_d.txt";
+            var differenceDescPath = DescPathToDesctiptors + FileName + "\\" + I + "_d.txt";
             var differenceDescFile = new StreamWriter(differenceDescPath);
             differences.Add(new List<double>());
             for (var i = 1; i < obj.Count; i++)
             {
                 var regressionNext = get_regression(obj[i]);
                 var regressionPrev = get_regression(obj[i - 1]);
-                differenceDescFile.WriteLine(Math.Round(Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0])*57.3, 3));
+                differenceDescFile.WriteLine((Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]))*57.3);
                 differences[differences.Count - 1].Add(
-                    Math.Round(Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]), 3));
+                    Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]));
             }
             differenceDescFile.Close();
 
@@ -540,8 +539,8 @@ namespace CannyEdgeDetectionCSharp
         {
             if (Directory.Exists(DescPathToDesctiptors + FileName))
             {
-                //MessageBox.Show(
-                //    @"Папка с таким названием уже существует. Прекратите выполнение программы и измените название входного файла, иначе выходные файлы будут перезаписаны.");
+                MessageBox.Show(
+                    @"Папка с таким названием уже существует. Прекратите выполнение программы и измените название входного файла, иначе выходные файлы будут перезаписаны.");
             }
             else
                 Directory.CreateDirectory(DescPathToDesctiptors + FileName);
@@ -584,7 +583,7 @@ namespace CannyEdgeDetectionCSharp
             {
                 bit.SetPixel((int)point[0] - a[0][0], (int)point[1] - a[0][1], Color.Black);
             }
-            bit.Save(@"C:\2\ellipse\" + I + "_o.bmp");
+            bit.Save(DescPathToDesctiptors + FileName + "\\" + I + "_o.bmp");
         }
 
         public Bitmap getOnlyOneBitmap(List<double[]> obj)
@@ -611,6 +610,7 @@ namespace CannyEdgeDetectionCSharp
             const string bDescCorrelation = "DescCorrelation";
             const string bDescPathToDesctiptors = "DescPathToDesctiptors";
             const string bDescPathToLibrary = "DescPathToLibrary";
+            const string bOtherDifferenceBetweenTwoArrays = "OtherDifferenceBetweenTwoArrays";
 
             using (var sr = new StreamReader("Settings.txt"))
             {
@@ -619,47 +619,51 @@ namespace CannyEdgeDetectionCSharp
                     var line = sr.ReadLine();
                     if (line.Contains(bCannyHighTh))
                     {
-                        CannyHighTh = Single.Parse(line.Substring(line.IndexOf(' ')));
+                        CannyHighTh = Single.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bCannyLowTL))
                     {
-                        CannyLowTL = Single.Parse(line.Substring(line.IndexOf(' ')));
+                        CannyLowTL = Single.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bCannyMaskSize))
                     {
-                        CannyMaskSize = Int32.Parse(line.Substring(line.IndexOf(' ')));
+                        CannyMaskSize = Int32.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bCannySigma))
                     {
-                        CannySigma = Single.Parse(line.Substring(line.IndexOf(' ')));
+                        CannySigma = Single.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bDescLengthBetweenObjects))
                     {
-                        DescLengthBetweenObjects = Int32.Parse(line.Substring(line.IndexOf(' ')));
+                        DescLengthBetweenObjects = Int32.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bDescLengthInsideObject))
                     {
-                        DescLengthInsideObject = Int32.Parse(line.Substring(line.IndexOf(' ')));
+                        DescLengthInsideObject = Int32.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bDescPointsCountInsideSegment))
                     {
-                        DescPointsCountInsideSegment = Int32.Parse(line.Substring(line.IndexOf(' ')));
+                        DescPointsCountInsideSegment = Int32.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bDescMinSegmentsCount))
                     {
-                        DescMinSegmentsCount = Int32.Parse(line.Substring(line.IndexOf(' ')));
+                        DescMinSegmentsCount = Int32.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bDescCorrelation))
                     {
-                        DescCorrelation = Double.Parse(line.Substring(line.IndexOf(' ')+2));
+                        DescCorrelation = Double.Parse(line.Substring(line.IndexOf(' ') + 1));
                     }
                     else if (line.Contains(bDescPathToDesctiptors))
                     {
-                        DescPathToDesctiptors = line.Substring(line.IndexOf(' ')+1);
+                        DescPathToDesctiptors = line.Substring(line.IndexOf(' ') + 1);
                     }
                     else if (line.Contains(bDescPathToLibrary))
                     {
-                        DescPathToLibrary = line.Substring(line.IndexOf(' ')+1);
+                        DescPathToLibrary = line.Substring(line.IndexOf(' ') + 1);
+                    }
+                    else if (line.Contains(bOtherDifferenceBetweenTwoArrays))
+                    {
+                        OtherDifferenceBetweenTwoArrays = Int32.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else MessageBox.Show("error" + line);
                 }

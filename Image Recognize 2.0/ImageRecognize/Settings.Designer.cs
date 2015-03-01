@@ -59,7 +59,7 @@
             this.Sigma = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.OtherDifferenceBetweenTwoArrays = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -331,22 +331,22 @@
             this.checkBox1.Text = "Save circuit";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // OtherDifferenceBetweenTwoArrays
             // 
-            this.textBox1.Location = new System.Drawing.Point(12, 267);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(38, 20);
-            this.textBox1.TabIndex = 116;
-            this.textBox1.Text = "10";
+            this.OtherDifferenceBetweenTwoArrays.Location = new System.Drawing.Point(12, 257);
+            this.OtherDifferenceBetweenTwoArrays.Name = "OtherDifferenceBetweenTwoArrays";
+            this.OtherDifferenceBetweenTwoArrays.Size = new System.Drawing.Size(47, 20);
+            this.OtherDifferenceBetweenTwoArrays.TabIndex = 116;
+            this.OtherDifferenceBetweenTwoArrays.Text = "20";
             // 
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(9, 238);
+            this.label17.Location = new System.Drawing.Point(9, 228);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(86, 26);
+            this.label17.Size = new System.Drawing.Size(89, 26);
             this.label17.TabIndex = 117;
-            this.label17.Text = "Разница между\r\nдескрипторами";
+            this.label17.Text = "Разница между \r\nмассивами";
             // 
             // Settings
             // 
@@ -354,7 +354,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(407, 339);
             this.Controls.Add(this.label17);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.OtherDifferenceBetweenTwoArrays);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.Sigma);
@@ -427,7 +427,7 @@
         private System.Windows.Forms.TextBox Sigma;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox OtherDifferenceBetweenTwoArrays;
         private System.Windows.Forms.Label label17;
     }
 }
