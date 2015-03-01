@@ -1,0 +1,12 @@
+CannyHighTh 460
+CannyLowTL 450
+CannyMaskSize 5
+CannySigma 1
+DescLengthBetweenObjects 10
+DescLengthInsideObject 5
+DescPointsCountInsideSegment 10
+DescMinSegmentsCount 10
+DescCorrelation 0.5
+DescPathToDesctiptors C:\1\
+DescPathToLibrary C:\2\
+OtherDifferenceBetweenTwoArrays 20

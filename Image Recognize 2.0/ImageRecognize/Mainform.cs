@@ -18,15 +18,15 @@ namespace CannyEdgeDetectionCSharp
         }
 
         //settings
-        private float CannyHighTh;
-        private float CannyLowTL;
-        private int CannyMaskSize;
-        private float CannySigma;
-        private int DescLengthBetweenObjects;
-        private int DescLengthInsideObject;
-        private int DescMinSegmentsCount;
-        private double DescCorrelation;
-        private int DescPointsCountInsideSegment;
+        public float CannyHighTh;
+        public float CannyLowTL;
+        public int CannyMaskSize;
+        public float CannySigma;
+        public int DescLengthBetweenObjects;
+        public int DescLengthInsideObject;
+        public int DescMinSegmentsCount;
+        public double DescCorrelation;
+        public int DescPointsCountInsideSegment;
         public string DescPathToDesctiptors;
         public string DescPathToLibrary;
         public int OtherDifferenceBetweenTwoArrays;
