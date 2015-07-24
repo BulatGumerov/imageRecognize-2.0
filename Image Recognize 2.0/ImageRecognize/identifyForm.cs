@@ -20,7 +20,6 @@ namespace CannyEdgeDetectionCSharp
             InitializeComponent();
         }
 
-        //private string _fileName;
         private static Mainform Main;
         private int iterator;
 
@@ -37,7 +36,6 @@ namespace CannyEdgeDetectionCSharp
                     Directory.CreateDirectory(Main.DescPathToLibrary + str);
                 }
             }
-
             draw();
         }
 
@@ -45,11 +43,11 @@ namespace CannyEdgeDetectionCSharp
         public void draw()
         {
             var currObject = Main.descList[iterator].SourceCircuit;
-            var a = Main.MinAndMaxes(currObject);
-            Bitmap bit = new Bitmap(a[1][0] - a[0][0] + 2, a[1][1] - a[0][1] + 2);
+            var bit = Main.GetBitmap(currObject);
+            var minP = Main.GetMinPoint(currObject);
             foreach (var point in currObject)
             {
-                    bit.SetPixel((int)point[0] - a[0][0], (int)point[1] - a[0][1], Color.Black);
+                    bit.SetPixel(point.X - minP.X, point.Y - minP.Y, Color.Black);
             }
             pictureBox1.Image = bit;
             pictureBox2.Image = new Bitmap(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator +"_b" + ".bmp");
@@ -95,6 +93,12 @@ namespace CannyEdgeDetectionCSharp
             flowLayoutPanel1.Controls.Add(but);
         }
 
+        private static int GetIterator(string path)
+        {
+            var dir = Directory.GetFiles(Main.DescPathToLibrary + path);
+            return (dir.Length/4);
+        }
+
         private void ClickBut(object sender, EventArgs e)
         {
             if (Main.descList.Count == iterator)
@@ -102,26 +106,17 @@ namespace CannyEdgeDetectionCSharp
                 MessageBox.Show("Это был последний элемент");
                 return;
             }
-            var value = ((Button)sender).Tag;
+            var buttonName = ((Button)sender).Tag.ToString();
             var fromDescriptor = ReadFolder(Main.DescPathToDesctiptors);
             if (File.Exists(Main.DescPathToLibrary + Main.FileName + "\\" + fromDescriptor[iterator]))
             {
                 File.Delete(Main.DescPathToLibrary + Main.FileName + "\\" + fromDescriptor[iterator]);
             }
-            //if (File.Exists(@"\2\" + value + "\\" + main.Names[iterator][3]))
-            //{
-            //    File.Delete(@"\2\" + value + "\\" + main.Names[iterator][3]);
-            //}
-            ////if (File.Exists(main.DescPathToLibrary + value + "\\" + main.Names[iterator][5]))
-            ////{
-            ////    File.Delete(@"2\" + value + "\\" + main.Names[iterator][5]);
-            ////}
-            File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator + ".txt", Main.DescPathToLibrary + value + "\\" + iterator + ".txt");
-            File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator + "_d.txt", Main.DescPathToLibrary + value + "\\" + iterator + "_d.txt");
-            File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator + "_b.bmp", Main.DescPathToLibrary + value + "\\" + iterator + "_b.bmp");
-            File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator + "_o.bmp", Main.DescPathToLibrary + value + "\\" + iterator + "_o.bmp");
-            //File.Copy(main.Names[iterator][1], @"\2\" + value + "\\" + main.Names[iterator][3]);
-            //File.Copy(main.Names[iterator][4], @"2\" + value + "\\" + main.Names[iterator][5]);
+            var lastIter = GetIterator(buttonName);
+            File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator + ".txt", Main.DescPathToLibrary + buttonName + "\\" + lastIter + ".txt", true);
+            File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator + "_d.txt", Main.DescPathToLibrary + buttonName + "\\" + lastIter + "_d.txt", true);
+            File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator + "_b.bmp", Main.DescPathToLibrary + buttonName + "\\" + lastIter + "_b.bmp", true);
+            File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator + "_o.bmp", Main.DescPathToLibrary + buttonName + "\\" + lastIter + "_o.bmp", true);
             draw();
             iterator++;
             if (Main.descList.Count == iterator)

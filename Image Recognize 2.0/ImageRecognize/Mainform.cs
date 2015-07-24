@@ -1,7 +1,9 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 using System.Linq;
@@ -30,44 +32,78 @@ namespace CannyEdgeDetectionCSharp
         public string DescPathToDesctiptors;
         public string DescPathToLibrary;
         public int OtherDifferenceBetweenTwoArrays;
+        public double DescLineCorrelation;
+        public int DescTailLength;
 
         
         public List<List<double>> differences;
         public List<Description> descList;
         private Canny _cannyData;
-        private List<double[]> _reducingList = new List<double[]>();
+        private List<Point> _reducingList;
         private OpenFileDialog _ofd;
         private bool _endObj;
-        private double[] _nextPoint = new double[3];
-        private double[] _beginPoint = new double[2];
+        private Point _nextPoint;
+        private Point _beginPoint;
         private Bitmap _inputImage;
         public String FileName;
-        private int I;
-        public List<List<double[]>> TempArray = new List<List<double[]>>();
+        public int I;
+        //public List<List<double[]>> TempArray = new List<List<double[]>>();
         private string _pathBmp;
-        public List<double[]> resultArray;
+        public List<Point> resultArray;
 
+        public class Point
+        {
+            public int X;
+            public int Y;
+
+            public Point()
+            {
+                X = 0;
+                Y = 0;
+            }
+            public Point(int x, int y)
+            {
+                X = x;
+                Y = y;
+            }
+        }
+
+        public class PointWithLength
+        {
+            public double Length;
+            public Point Point;
+
+            public PointWithLength(Point point, double length)
+            {
+                Point = point;
+                Length = length;
+            }
+
+        }
 
         public struct Description
         {
-            public Description (string pathToImage, string pathToRegressionDescription, string pathToDifferenceDescription, List<double[]> sourceCircuit, List<double> difference) : this()
+            public Description (string pathToImage, string pathToRegressionDescription, string pathToDifferenceDescription, List<Point> sourceCircuit, List<double> difference/*, List<double[]> corners*/ ) : this()
             {
                 PathToImage = pathToImage;
                 PathToRegressionDescription = pathToRegressionDescription;
                 PathToDifferenceDescription = pathToDifferenceDescription;
                 SourceCircuit = sourceCircuit;
                 Difference = difference;
+                //Corners = corners;
             }
 
             public string PathToImage { get; set; }
             public string PathToRegressionDescription { get; set; }
             public string PathToDifferenceDescription { get; set; }
-            public List<double[]> SourceCircuit { get; set; }
+            public List<Point> SourceCircuit { get; set; }
             public List<double> Difference { get; set; }
+            public List<Point> Corners { get; set; } 
         }
 
         private void ClickOpen(object sender, EventArgs e)
         {
+            I = 0;
             _ofd = new OpenFileDialog
             {
                 Filter =
@@ -99,22 +135,24 @@ namespace CannyEdgeDetectionCSharp
                     CannyEdges.Image = _cannyData.DisplayImage(_cannyData.EdgeMap);
 
                     CheckCreateDirectories();
-                    //new Bitmap(CannyEdges.Image).Save(DescPathToDesctiptors + FileName + "\\circuit.bmp");
+                    new Bitmap(CannyEdges.Image).Save(DescPathToDesctiptors + FileName + "\\circuit_" + I+".bmp");
                 }
                 catch (NullReferenceException)
                 {
                     MessageBox.Show(@"Выберите изображение");
                     return;
                 }
+
+            _reducingList = new List<Point>();
                 for (var i = 0; i < _cannyData.EdgeMap.GetLength(0); i++)
                     for (var j = 0; j < _cannyData.EdgeMap.GetLength(1); j++)
                     {
                         if (_cannyData.EdgeMap[i, j] > 0)
-                            _reducingList.Add(new[] {i, (double) j});
+                            _reducingList.Add(new Point(i, j));
                     }
                 //_beginPoint = GetMaxLength(_reducingList, ShapeCenter());
-            var rand = new Random();
-            _beginPoint = _reducingList[rand.Next(0, _reducingList.Count)];
+            //var rand = new Random();
+            _beginPoint = _reducingList[0];
 
         }
 
@@ -122,55 +160,48 @@ namespace CannyEdgeDetectionCSharp
 
         private void Step2Circuit(object sender, EventArgs e)
         {
-            differences = new List<List<double>>();
-
-            descList = new List<Description>();
-
+            if (_inputImage == null)
+            {
+                MessageBox.Show(@"Выберите изображение");
+                return;
+            }
+            if (CannyEdges.Image == null)
+            {
+                MessageBox.Show(@"Обработайте изображение");
+                return;
+            }
             if (_reducingList.Count == 0)
             {
                 MessageBox.Show(@"Вначале необходимо оконтурить изображениеи");
                 return;
             }
 
-            try
-            {
-                while (true)
-                {
-                    if (_reducingList.Count > DescPointsCountInsideSegment + 1)
-                    {
-                        resultArray = new List<double[]>();
-                        _nextPoint = _beginPoint;
-                        var obj = GetOneObject();
-                        if (obj != null)
-                        {
-                            DrawApproxBit(obj);
-                            DrawOnlyOneObject(obj);
-                            var desc = MakeDescriptions(obj);
-                            descList.Add(desc);
-                            I++;
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show(@"Сканирование завершено");
-                        break;
-                    }
-                }
-            }
-            catch (NullReferenceException)
-            {
-                if (_inputImage == null)
-                {
-                    MessageBox.Show(@"Выберите изображение");
-                    return;
-                }
-                if (CannyEdges.Image == null)
-                {
-                    MessageBox.Show(@"Обработайте изображение");
-                }
-            }
+            differences = new List<List<double>>();
+            descList = new List<Description>();
+            I = 0;
 
-            
+            while (true)
+            {
+                if (_reducingList.Count > DescPointsCountInsideSegment + 1)
+                {
+                    resultArray = new List<Point>();
+                    _nextPoint = _beginPoint;
+                    var obj = GetOneObject();
+                    if (obj != null)
+                    {
+                        DrawApproxBit(obj);
+                        DrawOnlyOneObject(obj);
+                        var desc = MakeDescriptions(obj);
+                        descList.Add(desc);
+                        I++;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(@"Сканирование завершено");
+                    break;
+                }
+            }
         }
 
 
@@ -195,6 +226,7 @@ namespace CannyEdgeDetectionCSharp
 
         private void Step4Comparsion(object sender, EventArgs e)
         {
+            I = 0;
             var comparsion = new ComparsionForm() { Owner = this };
             comparsion.ShowDialog();
         }
@@ -206,188 +238,98 @@ namespace CannyEdgeDetectionCSharp
         }
 
 
-        private List<List<double[]>> GetOneObject()
+        private List<List<Point>> GetOneObject()
         {
-            var objectsMassive = new List<List<double[]>>();
+            var objectArray = new List<List<Point>>();
             while (true)
             {
+                var subPointsWithLength = new List<PointWithLength>();
                 while (resultArray.Count < DescPointsCountInsideSegment)
                 {
                     if (_reducingList.Count < DescPointsCountInsideSegment + 1)
                     {
-                        if (objectsMassive.Count <= DescMinSegmentsCount)
+                        if (objectArray.Count <= DescMinSegmentsCount)
                         {
-                            objectsMassive.Clear();
+                            objectArray.Clear();
                             resultArray.Clear();
                             return null;
                         }
                         //DrawApproxBit(objectsMassive);
                         //I++;
-                        return objectsMassive;
-                    }
-                    var pointsLength = new List<double[]>();
-                    foreach (var elem in _reducingList)
-                    {
-                        pointsLength.Add(new[]
-                        {
-                            elem[0], elem[1], get_length(_nextPoint[0], elem[0], _nextPoint[1], elem[1])
-                        });
-                    }
-                   
-
-                    pointsLength.Sort((x, y) => x[2].CompareTo(y[2]));
-                    FuckingEquals(new[] {pointsLength[0][0], pointsLength[0][1]});
-
-
-                    TempArray.Add(new List<double[]>());
-                    for (var j = 1; j < DescPointsCountInsideSegment + 1; j++)
-                    {
-                        TempArray[TempArray.Count - 1].Add(pointsLength[j]);
+                        return objectArray;
                     }
 
-                    var min = new[] {0, 0, Double.PositiveInfinity};
-                    foreach (var minArray in TempArray)
-                    {
-                        foreach (var elem in minArray)
-                        {
-                            if (elem[2] < min[2])
-                            {
-                                min = elem;
-                            }
-                        }
-                    }
-                    FuckingEquals(new[] {min[0], min[1]}, TempArray);
 
-                    if (min[2] < DescLengthInsideObject)
+                    var pointsWithLength = _reducingList.Select(point => new PointWithLength(point, get_length(_nextPoint, point))).ToList();
+                    pointsWithLength.Sort((x,y)=>x.Length.CompareTo(y.Length));
+                    _reducingList.RemoveAll(x => x.Equals(pointsWithLength.First().Point));
+                    pointsWithLength.RemoveAt(0);
+
+                    subPointsWithLength.AddRange(pointsWithLength.GetRange(0, DescPointsCountInsideSegment));
+
+                    //var min = subPointsWithLength.OrderBy(x => x.Length).First();
+                    var min = subPointsWithLength.First();
+                    subPointsWithLength.RemoveAll(x=>x.Point.Equals(min.Point));
+
+                    if (min.Length < DescLengthInsideObject)
                     {
-                        _nextPoint = min;
-                        resultArray.Add(min);
+                        _nextPoint = min.Point;
+                        resultArray.Add(min.Point);
                     }
-                    else if (min[2] >= DescLengthInsideObject && min[2] <= DescLengthBetweenObjects)
+                    else if (min.Length >= DescLengthInsideObject && min.Length <= DescLengthBetweenObjects)
                     {
-                        TempArray.Clear();
-                        _nextPoint = min;
+                        subPointsWithLength.Clear();
+                        _nextPoint = min.Point;
                     }
-                    else if (min[2] >= DescLengthBetweenObjects && !_endObj)
+                    else if (min.Length >= DescLengthBetweenObjects && !_endObj)
                     {
-                        TempArray.Clear();
+                        subPointsWithLength.Clear();
                         _endObj = true;
                         _nextPoint = _beginPoint;
                     }
-                    else if (min[2] >= DescLengthBetweenObjects && _endObj)
+                    else if (min.Length >= DescLengthBetweenObjects && _endObj)
                     {
-                        TempArray.Clear();
+                        subPointsWithLength.Clear();
                         _endObj = false;
-                        _beginPoint = min;
-                        if (objectsMassive.Count <= DescMinSegmentsCount)
+                        _beginPoint = min.Point;
+                        if (objectArray.Count <= DescMinSegmentsCount)
                         {
-                            objectsMassive.Clear();
-                            _nextPoint = min;
+                            objectArray.Clear();
+                            _nextPoint = min.Point;
                             resultArray.Clear();
                             continue;
                         }
-                        return new List<List<double[]>>(objectsMassive);
+                        return new List<List<Point>>(objectArray);
                     }
                 }
-                TempArray.Clear();
                 if (Correlation(resultArray) >= DescCorrelation)
                 {
-                    objectsMassive.Add(new List<double[]>());
-                    foreach (var t in resultArray)
-                    {
-                        objectsMassive[objectsMassive.Count - 1].Add(t);
-                    }
+                    objectArray.Add(new List<Point>(resultArray));
                 }
-                _nextPoint = new[] {resultArray[resultArray.Count - 1][0], resultArray[resultArray.Count - 1][1]};
+                var nextP = new Point(resultArray[resultArray.Count - 1].X, resultArray[resultArray.Count - 1].Y);
+                _nextPoint = nextP;
                 resultArray.Clear();
             }
         }
 
-
-        private double[] ShapeCenter()
+        private static double get_length(Point nextP, Point p)
         {
-            try
-            {
-                double sumx = 0, sumy = 0;
-                foreach (var t in _reducingList)
-                {
-                    sumx += t[0];
-                    sumy += t[1];
-                }
-                return new[] {sumx/_reducingList.Count, sumy/_reducingList.Count};
-            }
-            catch (NullReferenceException)
-            {
-                MessageBox.Show(@"массив точек пуст");
-                return null;
-            }
+            return Math.Sqrt(Math.Pow(nextP.X - p.X, 2) + Math.Pow(nextP.Y - p.Y, 2));
         }
 
 
-
-        private static double get_length(double x1, double x2, double y1, double y2)
+        private double[] GetRegression(List<Point> cloud)
         {
-            return Math.Sqrt(Math.Abs(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2)));
-        }
-
-
-
-        private static double[] GetMaxLength(IReadOnlyList<double[]> cloud, IList<double> point)
-        {
-            var max = new double[] {0, 0, 0};
-            for (var i = 1; i < cloud.Count; i++)
+            double meanXy = 0, meanSqrX = 0;
+            var meanX = (double)cloud.Sum(x => x.X)/cloud.Count;
+            var meanY = (double)cloud.Sum(x => x.Y)/cloud.Count;
+            foreach (var p in cloud)
             {
-                if (get_length(cloud[i][0], point[0], cloud[i][1], point[1]) > max[2])
-                {
-                    max[0] = cloud[i][0];
-                    max[1] = cloud[i][1];
-                    max[2] = get_length(cloud[i][0], point[0], cloud[i][1], point[1]);
-                }
-            }
-            return new[] {max[0], max[1]};
-        }
-
-        private void FuckingEquals(double[] point)
-        {
-            for (var i = 0; i < _reducingList.Count; i++)
-            {
-                if (point.SequenceEqual(_reducingList[i]))
-                {
-                    _reducingList.Remove(_reducingList[i]);
-                }
-            }
-        }
-
-
-
-        private static void FuckingEquals(IList<double> point, IEnumerable<List<double[]>> cloud)
-        {
-            foreach (var t in cloud)
-                for (var j = 0; j < t.Count; j++)
-                {
-                    if (point[0] == t[j][0] && point[1] == t[j][1])
-                    {
-                        t.Remove(t[j]);
-                    }
-                }
-        }
-
-        private double[] get_regression(IReadOnlyCollection<double[]> cloud)
-        {
-            double meanXy = 0, meanX = 0, meanY = 0, meanSqrX = 0;
-            foreach (double[] t in cloud)
-            {
-                meanXy += t[0]*t[1];
-                meanX += t[0];
-                meanY += t[1];
-                meanSqrX += Math.Pow(t[0], 2);
+                meanXy += p.X*p.Y;
+                meanSqrX += Math.Pow(p.X, 2);
             }
             meanSqrX /= cloud.Count;
-            meanX /= cloud.Count;
-            meanY /= cloud.Count;
             meanXy /= cloud.Count;
-
-
 
             var a = (meanXy - meanX*meanY)/(meanSqrX - Math.Pow(meanX, 2));
             var b = meanY - a*meanX;
@@ -400,76 +342,63 @@ namespace CannyEdgeDetectionCSharp
             {
                 b = Double.PositiveInfinity;
             }
-
             return new[] {a, b};
         }
 
 
-        private double Correlation(IReadOnlyList<double[]> cloud)
+        private double Correlation(List<Point> cloud)
         {
             double meanX = 0, meanY = 0, upCor = 0, downCor1 = 0, downCor2 = 0;
-            for (var i = 0; i < cloud.Count; i++)
+            foreach (var point in cloud)
             {
-                meanX += cloud[i][0];
-                meanY += cloud[i][1];
+                meanX += point.X;
+                meanY += point.Y;
             }
+
             meanX /= DescPointsCountInsideSegment;
             meanY /= DescPointsCountInsideSegment;
 
-            for (var i = 0; i < cloud.Count; i++)
+            foreach (var point in cloud)
             {
-                upCor += (cloud[i][0] - meanX)*(cloud[i][1] - meanY);
-                downCor1 += Math.Pow(cloud[i][0] - meanX, 2);
-                downCor2 += Math.Pow(cloud[i][1] - meanY, 2);
+                upCor += (point.X - meanX) * (point.Y - meanY);
+                downCor1 += Math.Pow(point.X - meanX, 2);
+                downCor2 += Math.Pow(point.Y - meanY, 2);
             }
 
-            return upCor == 0 ? 1 : Math.Abs(upCor/Math.Sqrt(downCor1*downCor2));
+            return upCor.Equals(0) ? 1 : Math.Abs(upCor/Math.Sqrt(downCor1*downCor2));
         }
 
 
-        private static List<int[]> GetMinMax(IReadOnlyList<double[]> cloud)
+        public Point GetMinPoint(IReadOnlyList<Point> cloud)
         {
-            double minx = cloud[0][0], miny = cloud[0][1], maxx = cloud[0][0], maxy = cloud[0][1];
-            var result = new List<int[]>();
-            foreach (double[] t in cloud)
-            {
-                if (minx > t[0])
-                    minx = t[0];
-                else if (maxx < t[0])
-                    maxx = t[0];
+            return new Point(cloud.Min(x => x.X), cloud.Min(x => x.Y));
+        }
 
-                if (miny > t[1])
-                    miny = t[1];
-                else if (maxy < t[1])
-                    maxy = t[1];
-            }
-            result.Add(new[] {(int) minx, (int) miny});
-            result.Add(new[] {(int) maxx, (int) maxy});
-
-            return result;
+        private static Point GetMaxPoint(List<Point> cloud)
+        {
+            return new Point(cloud.Max(x => x.X), cloud.Max(x => x.Y));
         }
 
 
-        private void DrawApproxBit(List<List<double[]>> obj)
+        private void DrawApproxBit(List<List<Point>> obj)
         {
             var _approxBit = new Bitmap(_inputImage);
             foreach (var cloud in obj)
             {
                 if (Correlation(cloud) >= DescCorrelation)
                 {
-                    var xmin = GetMinMax(cloud)[0][0];
-                    var xmax = GetMinMax(cloud)[1][0];
-                    var ymin = GetMinMax(cloud)[0][1];
-                    var ymax = GetMinMax(cloud)[1][1];
+                    var minP = GetMinPoint(cloud);
+                    var maxP = GetMaxPoint(cloud);
 
-                    var a = get_regression(cloud)[0];
-                    var b = get_regression(cloud)[1];
+                    var regression = GetRegression(cloud);
+                    var a = regression[0];
+                    var b = regression[1];
 
                     if (Math.Abs(a) <= 1)
                     {
-                        for (var i = xmin; i < xmax; i++)
+                        for (var i = minP.X; i < maxP.X; i++)
                         {
-                            var number = Convert.ToInt32(i*a + b);
+                            var number = Convert.ToInt32(Math.Round(i*a + b));
                             if (number >= _inputImage.Height)
                             {
                                 number = _inputImage.Height - 1;
@@ -479,9 +408,9 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else if (Math.Abs(a) > 1 && Math.Abs(a) < 10)
                     {
-                        for (int i = ymin; i <= ymax; i++)
+                        for (var i = minP.Y; i <= maxP.Y; i++)
                         {
-                            int number = Convert.ToInt32(-b/a + i/a);
+                            var number = Convert.ToInt32(-b/a + i/a);
                             if (number >= _inputImage.Width)
                             {
                                 number = _inputImage.Width - 1;
@@ -491,25 +420,27 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else
                     {
-                        for (int i = ymin; i < ymax; i++)
+                        for (int i = minP.Y; i < maxP.Y; i++)
                         {
-                            _approxBit.SetPixel(xmin, i, Color.Red);
+                            _approxBit.SetPixel(minP.X, i, Color.Red);
                         }
                     }
                 }
             }
             _pathBmp = DescPathToDesctiptors + FileName + "\\" + I + "_b.bmp";
+            if (File.Exists(_pathBmp))
+                File.Delete(_pathBmp);
             _approxBit.Save(_pathBmp);
         }
 
 
-        private Description MakeDescriptions(List<List<double[]>> obj)
+        private Description MakeDescriptions(List<List<Point>> obj)
         {
             var mainDescPath = DescPathToDesctiptors + FileName + "\\" + I + ".txt";
             var mainDescFile = new StreamWriter(mainDescPath);
             foreach (var cloud in obj)
             {
-                var regression = get_regression(cloud);
+                var regression = GetRegression(cloud);
                 mainDescFile.WriteLine(@"корреляция=" + Correlation(cloud) + " a=" + Math.Atan(regression[0])*57.3 + " b=" + regression[1]);
 
             }
@@ -520,17 +451,19 @@ namespace CannyEdgeDetectionCSharp
             differences.Add(new List<double>());
             for (var i = 1; i < obj.Count; i++)
             {
-                var regressionNext = get_regression(obj[i]);
-                var regressionPrev = get_regression(obj[i - 1]);
-                differenceDescFile.WriteLine((Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]))*57.3);
-                differences[differences.Count - 1].Add(
-                    Math.Atan(regressionNext[0]) - Math.Atan(regressionPrev[0]));
+                var regressionNext = GetRegression(obj[i]).First();
+                var regressionPrev = GetRegression(obj[i - 1]).First();
+                var difference = Math.Atan(regressionNext) * 57.3 - Math.Atan(regressionPrev) * 57.3;
+                difference = Math.Round(difference);
+                //difference = Math.Abs(difference);
+                differenceDescFile.WriteLine(difference);
+                differences[differences.Count - 1].Add(difference);
             }
             differenceDescFile.Close();
 
             var desc = new Description(_pathBmp,
                 differenceDescPath,
-                mainDescPath, getSimpleList(obj), differences[differences.Count-1]);
+                mainDescPath, GetSimpleList(obj), differences[differences.Count-1]);
             return desc;
         }
 
@@ -548,56 +481,44 @@ namespace CannyEdgeDetectionCSharp
 
 
 
-        public List<double[]> getSimpleList(List<List<double[]>> sourceList)
+        public List<Point> GetSimpleList(List<List<Point>> sourceList)
         {
             return sourceList.SelectMany(ar => ar).ToList();
         }
 
 
-        public List<int[]> MinAndMaxes(List<double[]> cloud)
+        public Bitmap GetBitmap(List<Point> cloud)
         {
+            var minP = new Point(cloud.Min(x => x.X), cloud.Min(x => x.Y));
+            var maxP = new Point(cloud.Max(x => x.X), cloud.Max(x => x.Y));
 
-            double minx = double.PositiveInfinity, miny = double.PositiveInfinity, maxx = double.NegativeInfinity, maxy = double.NegativeInfinity;
-            foreach (var point in cloud)
-            {
-                if (minx > point[0])
-                    minx = point[0];
-                if (maxx < point[0])
-                    maxx = point[0];
-
-                if (miny > point[1])
-                    miny = point[1];
-                if (maxy < point[1])
-                    maxy = point[1];
-            }
-
-            return new List<int[]> { new[] { (int)minx, (int)miny }, new[] { (int)maxx, (int)maxy } };
+            return new Bitmap(maxP.X-minP.X+1, maxP.Y-minP.Y+1);
         }
 
-        public void DrawOnlyOneObject(List<List<double[]>> obj)
+        public void DrawOnlyOneObject(List<List<Point>> objs)
         {
-            var currObject = getSimpleList(obj);
-            var a = MinAndMaxes(currObject);
-            Bitmap bit = new Bitmap(a[1][0] - a[0][0] + 2, a[1][1] - a[0][1] + 2);
+            var currObject = GetSimpleList(objs);
+            var bit = GetBitmap(currObject);
+            var minP = GetMinPoint(currObject);
             foreach (var point in currObject)
             {
-                bit.SetPixel((int)point[0] - a[0][0], (int)point[1] - a[0][1], Color.Black);
+                bit.SetPixel(point.X - minP.X,point.Y - minP.Y, Color.Black);
             }
             bit.Save(DescPathToDesctiptors + FileName + "\\" + I + "_o.bmp");
         }
 
-        public Bitmap getOnlyOneBitmap(List<double[]> obj)
+        public Bitmap GetOnlyOneBitmap(List<Point> obj)
         {
-            var a = MinAndMaxes(obj);
-            Bitmap bit = new Bitmap(a[1][0] - a[0][0] + 2, a[1][1] - a[0][1] + 2);
+            var bit = GetBitmap(obj);
+            var minP = GetMinPoint(obj);
             foreach (var point in obj)
             {
-                bit.SetPixel((int)point[0] - a[0][0], (int)point[1] - a[0][1], Color.Black);
+                bit.SetPixel(point.X - minP.X, point.Y - minP.Y, Color.Black);
             }
             return bit;
         }
 
-        public void ReadSettings(object sender, EventArgs e)
+        private void ReadSettings(object sender, EventArgs e)
         {
             const string bCannyHighTh = "CannyHighTh";
             const string bCannyLowTL = "CannyLowTL";
@@ -610,7 +531,7 @@ namespace CannyEdgeDetectionCSharp
             const string bDescCorrelation = "DescCorrelation";
             const string bDescPathToDesctiptors = "DescPathToDesctiptors";
             const string bDescPathToLibrary = "DescPathToLibrary";
-            const string bOtherDifferenceBetweenTwoArrays = "OtherDifferenceBetweenTwoArrays";
+            //const string bOtherDifferenceBetweenTwoArrays = "OtherDifferenceBetweenTwoArrays";
 
             using (var sr = new StreamReader("Settings.txt"))
             {
@@ -661,11 +582,10 @@ namespace CannyEdgeDetectionCSharp
                     {
                         DescPathToLibrary = line.Substring(line.IndexOf(' ') + 1);
                     }
-                    else if (line.Contains(bOtherDifferenceBetweenTwoArrays))
+                    else
                     {
                         OtherDifferenceBetweenTwoArrays = Int32.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
-                    else MessageBox.Show("error" + line);
                 }
             }
         }

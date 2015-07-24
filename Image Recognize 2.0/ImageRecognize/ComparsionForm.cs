@@ -29,10 +29,7 @@ namespace CannyEdgeDetectionCSharp
             foreach (var dir in dirs)
             {
                 var fileAddress = Directory.GetFiles(dir, "*_d.txt");
-                foreach (var filesPath in fileAddress)
-                {
-                    filesList.Add(filesPath);
-                }
+                filesList.AddRange(fileAddress);
             }
             return filesList;
         }
@@ -45,10 +42,7 @@ namespace CannyEdgeDetectionCSharp
             foreach (var dir in dirs)
             {
                 var fileAddress = Directory.GetFiles(dir, "*_o.bmp");
-                foreach (var filesPath in fileAddress)
-                {
-                    filesList.Add(filesPath);
-                }
+                filesList.AddRange(fileAddress);
             }
             return filesList;
         }
@@ -107,7 +101,7 @@ namespace CannyEdgeDetectionCSharp
             {
                 if (libAr.Count > 2)
                 {
-                    int address = 0;
+                    var address = 0;
                     var n = Double.PositiveInfinity;
                     for (var j = 2; j < libAr.Count; j++)
                     {
@@ -147,7 +141,7 @@ namespace CannyEdgeDetectionCSharp
         private void ComparsionForm_Load(object sender, EventArgs e)
         {
             main = Owner as Mainform;
-            I = 0;
+            I = main.I;
             if (main.descList == null)
             {
                 MessageBox.Show(@"Вначале обработайте изображение");
@@ -159,8 +153,9 @@ namespace CannyEdgeDetectionCSharp
                 return;
             }
             EqualWithSimmetry(main.descList[I].Difference);
-            pictureBox5.Image = main.getOnlyOneBitmap(main.descList[I].SourceCircuit);
+            pictureBox5.Image = main.GetOnlyOneBitmap(main.descList[I].SourceCircuit);
             pictureBox1.Image = new Bitmap(main.descList[I].PathToImage);
+            main.I++;
         }
     }
 }

@@ -1,2 +1,4 @@
 triangle
 other
+circle
+polygon

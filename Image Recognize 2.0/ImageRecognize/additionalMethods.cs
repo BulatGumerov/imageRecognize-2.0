@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace CannyEdgeDetectionCSharp
 {
-    class auxiliaryMethods
+    class additionalMethods
     {
         public void someMethods()
         {
