@@ -142,19 +142,19 @@ namespace CannyEdgeDetectionCSharp
         {
             main = Owner as Mainform;
             I = main.I;
-            if (main.descList == null)
+            if (main.DescList == null)
             {
                 MessageBox.Show(@"Вначале обработайте изображение");
                 return;
             }
-            if (main.descList.Count == 0)
+            if (main.DescList.Count == 0)
             {
                 MessageBox.Show(@"Вначале обработайте изображение");
                 return;
             }
-            EqualWithSimmetry(main.descList[I].Difference);
-            pictureBox5.Image = main.GetOnlyOneBitmap(main.descList[I].SourceCircuit);
-            pictureBox1.Image = new Bitmap(main.descList[I].PathToImage);
+            EqualWithSimmetry(main.DescList[I].Difference);
+            pictureBox5.Image = main.GetOnlyOneBitmap(main.DescList[I].SourceCircuit);
+            pictureBox1.Image = new Bitmap(main.DescList[I].PathToImage);
             main.I++;
         }
     }

@@ -34,7 +34,7 @@ namespace CannyEdgeDetectionCSharp
                 file.WriteLine("CannyHighTh " + TH.Text);
                 Main.CannyHighTh = Single.Parse(TH.Text);
                 file.WriteLine("CannyLowTL " + TL.Text);
-                Main.CannyLowTL = Single.Parse(TL.Text);
+                Main.CannyLowTl = Single.Parse(TL.Text);
                 file.WriteLine("CannyMaskSize " + MaskSize.Text);
                 Main.CannyMaskSize = Int32.Parse(MaskSize.Text);
                 file.WriteLine("CannySigma " + Sigma.Text);

@@ -42,7 +42,7 @@ namespace CannyEdgeDetectionCSharp
 
         public void draw()
         {
-            var currObject = Main.descList[iterator].SourceCircuit;
+            var currObject = Main.DescList[iterator].SourceCircuit;
             var bit = Main.GetBitmap(currObject);
             var minP = Main.GetMinPoint(currObject);
             foreach (var point in currObject)
@@ -71,7 +71,7 @@ namespace CannyEdgeDetectionCSharp
 
         private void button6_Click(object sender, EventArgs e)
         {
-            if (Main.descList.Count == iterator)
+            if (Main.DescList.Count == iterator)
             {
                 MessageBox.Show("Это был последний элемент");
                 return;
@@ -101,7 +101,7 @@ namespace CannyEdgeDetectionCSharp
 
         private void ClickBut(object sender, EventArgs e)
         {
-            if (Main.descList.Count == iterator)
+            if (Main.DescList.Count == iterator)
             {
                 MessageBox.Show("Это был последний элемент");
                 return;
@@ -119,7 +119,7 @@ namespace CannyEdgeDetectionCSharp
             File.Copy(Main.DescPathToDesctiptors + Main.FileName + "\\" + iterator + "_o.bmp", Main.DescPathToLibrary + buttonName + "\\" + lastIter + "_o.bmp", true);
             draw();
             iterator++;
-            if (Main.descList.Count == iterator)
+            if (Main.DescList.Count == iterator)
             {
                 MessageBox.Show("Это был последний элемент");
                 return;

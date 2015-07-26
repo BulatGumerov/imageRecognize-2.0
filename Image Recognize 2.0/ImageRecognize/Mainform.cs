@@ -1,14 +1,9 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 using System.Linq;
 using System.IO;
-using System.Xml.Schema;
 
 namespace CannyEdgeDetectionCSharp
 {
@@ -21,7 +16,7 @@ namespace CannyEdgeDetectionCSharp
 
         //settings
         public float CannyHighTh;
-        public float CannyLowTL;
+        public float CannyLowTl;
         public int CannyMaskSize;
         public float CannySigma;
         public int DescLengthBetweenObjects;
@@ -32,12 +27,12 @@ namespace CannyEdgeDetectionCSharp
         public string DescPathToDesctiptors;
         public string DescPathToLibrary;
         public int OtherDifferenceBetweenTwoArrays;
-        public double DescLineCorrelation;
-        public int DescTailLength;
+        public double DescTailCorrelation=0.7;
+        public int DescTailLength=10;
 
         
-        public List<List<double>> differences;
-        public List<Description> descList;
+        public List<List<double>> Differences;
+        public List<Description> DescList;
         private Canny _cannyData;
         private List<Point> _reducingList;
         private OpenFileDialog _ofd;
@@ -49,7 +44,6 @@ namespace CannyEdgeDetectionCSharp
         public int I;
         //public List<List<double[]>> TempArray = new List<List<double[]>>();
         private string _pathBmp;
-        public List<Point> resultArray;
 
         public class Point
         {
@@ -81,9 +75,9 @@ namespace CannyEdgeDetectionCSharp
 
         }
 
-        public struct Description
+        public class Description
         {
-            public Description (string pathToImage, string pathToRegressionDescription, string pathToDifferenceDescription, List<Point> sourceCircuit, List<double> difference/*, List<double[]> corners*/ ) : this()
+            public Description (string pathToImage, string pathToRegressionDescription, string pathToDifferenceDescription, List<Point> sourceCircuit, List<double> difference)
             {
                 PathToImage = pathToImage;
                 PathToRegressionDescription = pathToRegressionDescription;
@@ -98,12 +92,11 @@ namespace CannyEdgeDetectionCSharp
             public string PathToDifferenceDescription { get; set; }
             public List<Point> SourceCircuit { get; set; }
             public List<double> Difference { get; set; }
-            public List<Point> Corners { get; set; } 
+            //public List<Point> Corners { get; set; } 
         }
 
         private void ClickOpen(object sender, EventArgs e)
         {
-            I = 0;
             _ofd = new OpenFileDialog
             {
                 Filter =
@@ -131,10 +124,11 @@ namespace CannyEdgeDetectionCSharp
         {
                 try
                 {
-                    _cannyData = new Canny(_inputImage, CannyHighTh, CannyLowTL, CannyMaskSize, CannySigma);
+                    _cannyData = new Canny(_inputImage, CannyHighTh, CannyLowTl, CannyMaskSize, CannySigma);
                     CannyEdges.Image = _cannyData.DisplayImage(_cannyData.EdgeMap);
 
                     CheckCreateDirectories();
+                    I = 0;
                     new Bitmap(CannyEdges.Image).Save(DescPathToDesctiptors + FileName + "\\circuit_" + I+".bmp");
                 }
                 catch (NullReferenceException)
@@ -176,15 +170,13 @@ namespace CannyEdgeDetectionCSharp
                 return;
             }
 
-            differences = new List<List<double>>();
-            descList = new List<Description>();
-            I = 0;
+            Differences = new List<List<double>>();
+            DescList = new List<Description>();
 
             while (true)
             {
                 if (_reducingList.Count > DescPointsCountInsideSegment + 1)
                 {
-                    resultArray = new List<Point>();
                     _nextPoint = _beginPoint;
                     var obj = GetOneObject();
                     if (obj != null)
@@ -192,7 +184,7 @@ namespace CannyEdgeDetectionCSharp
                         DrawApproxBit(obj);
                         DrawOnlyOneObject(obj);
                         var desc = MakeDescriptions(obj);
-                        descList.Add(desc);
+                        DescList.Add(desc);
                         I++;
                     }
                 }
@@ -215,6 +207,11 @@ namespace CannyEdgeDetectionCSharp
             if (CannyEdges.Image == null)
             {
                 MessageBox.Show(@"Обработайте изображение");
+                return;
+            }
+            if (DescList.Count.Equals(0))
+            {
+                MessageBox.Show(@"Не распознано ниодного объекта");
                 return;
             }
             var identify = new identifyForm {Owner = this};
@@ -241,14 +238,15 @@ namespace CannyEdgeDetectionCSharp
         private List<List<Point>> GetOneObject()
         {
             var objectArray = new List<List<Point>>();
+            var resultArray = new List<Point>();
             while (true)
             {
                 var subPointsWithLength = new List<PointWithLength>();
-                while (resultArray.Count < DescPointsCountInsideSegment)
+                while (LineCorrelation(resultArray))
                 {
-                    if (_reducingList.Count < DescPointsCountInsideSegment + 1)
+                    if (_reducingList.Count < DescPointsCountInsideSegment+1)
                     {
-                        if (objectArray.Count <= DescMinSegmentsCount)
+                        if (objectArray.Count < DescMinSegmentsCount)
                         {
                             objectArray.Clear();
                             resultArray.Clear();
@@ -260,7 +258,7 @@ namespace CannyEdgeDetectionCSharp
                     }
 
 
-                    var pointsWithLength = _reducingList.Select(point => new PointWithLength(point, get_length(_nextPoint, point))).ToList();
+                    var pointsWithLength = _reducingList.Select(point => new PointWithLength(point, GetLength(_nextPoint, point))).ToList();
                     pointsWithLength.Sort((x,y)=>x.Length.CompareTo(y.Length));
                     _reducingList.RemoveAll(x => x.Equals(pointsWithLength.First().Point));
                     pointsWithLength.RemoveAt(0);
@@ -292,7 +290,7 @@ namespace CannyEdgeDetectionCSharp
                         subPointsWithLength.Clear();
                         _endObj = false;
                         _beginPoint = min.Point;
-                        if (objectArray.Count <= DescMinSegmentsCount)
+                        if (objectArray.Count < DescMinSegmentsCount)
                         {
                             objectArray.Clear();
                             _nextPoint = min.Point;
@@ -312,7 +310,17 @@ namespace CannyEdgeDetectionCSharp
             }
         }
 
-        private static double get_length(Point nextP, Point p)
+        bool LineCorrelation(List<Point> cloud)
+        {
+            if (cloud.Count < DescTailLength)
+            {
+                return true;
+            }
+            var subAr = cloud.GetRange(cloud.Count - DescTailLength, DescTailLength);
+            return !(Correlation(subAr) < DescTailCorrelation);
+        }
+
+        private static double GetLength(Point nextP, Point p)
         {
             return Math.Sqrt(Math.Pow(nextP.X - p.X, 2) + Math.Pow(nextP.Y - p.Y, 2));
         }
@@ -382,7 +390,7 @@ namespace CannyEdgeDetectionCSharp
 
         private void DrawApproxBit(List<List<Point>> obj)
         {
-            var _approxBit = new Bitmap(_inputImage);
+            var approxBit = new Bitmap(_inputImage);
             foreach (var cloud in obj)
             {
                 if (Correlation(cloud) >= DescCorrelation)
@@ -403,7 +411,7 @@ namespace CannyEdgeDetectionCSharp
                             {
                                 number = _inputImage.Height - 1;
                             }
-                            _approxBit.SetPixel(i, number, Color.Red);
+                            approxBit.SetPixel(i, number, Color.Red);
                         }
                     }
                     else if (Math.Abs(a) > 1 && Math.Abs(a) < 10)
@@ -415,14 +423,14 @@ namespace CannyEdgeDetectionCSharp
                             {
                                 number = _inputImage.Width - 1;
                             }
-                            _approxBit.SetPixel(number, i, Color.Red);
+                            approxBit.SetPixel(number, i, Color.Red);
                         }
                     }
                     else
                     {
-                        for (int i = minP.Y; i < maxP.Y; i++)
+                        for (var i = minP.Y; i < maxP.Y; i++)
                         {
-                            _approxBit.SetPixel(minP.X, i, Color.Red);
+                            approxBit.SetPixel(minP.X, i, Color.Red);
                         }
                     }
                 }
@@ -430,7 +438,7 @@ namespace CannyEdgeDetectionCSharp
             _pathBmp = DescPathToDesctiptors + FileName + "\\" + I + "_b.bmp";
             if (File.Exists(_pathBmp))
                 File.Delete(_pathBmp);
-            _approxBit.Save(_pathBmp);
+            approxBit.Save(_pathBmp);
         }
 
 
@@ -441,29 +449,28 @@ namespace CannyEdgeDetectionCSharp
             foreach (var cloud in obj)
             {
                 var regression = GetRegression(cloud);
-                mainDescFile.WriteLine(@"корреляция=" + Correlation(cloud) + " a=" + Math.Atan(regression[0])*57.3 + " b=" + regression[1]);
+                mainDescFile.WriteLine(@"корреляция=" + Correlation(cloud) + " a=" + Math.Atan(regression[0])*57.3 + " b=" + regression[1]+" "+cloud.Count);
 
             }
             mainDescFile.Close();
 
             var differenceDescPath = DescPathToDesctiptors + FileName + "\\" + I + "_d.txt";
             var differenceDescFile = new StreamWriter(differenceDescPath);
-            differences.Add(new List<double>());
+            Differences.Add(new List<double>());
             for (var i = 1; i < obj.Count; i++)
             {
-                var regressionNext = GetRegression(obj[i]).First();
-                var regressionPrev = GetRegression(obj[i - 1]).First();
+                var regressionNext = GetRegression(obj[i])[0];
+                var regressionPrev = GetRegression(obj[i - 1])[0];
                 var difference = Math.Atan(regressionNext) * 57.3 - Math.Atan(regressionPrev) * 57.3;
                 difference = Math.Round(difference);
-                //difference = Math.Abs(difference);
                 differenceDescFile.WriteLine(difference);
-                differences[differences.Count - 1].Add(difference);
+                Differences[Differences.Count - 1].Add(difference);
             }
             differenceDescFile.Close();
 
             var desc = new Description(_pathBmp,
                 differenceDescPath,
-                mainDescPath, GetSimpleList(obj), differences[differences.Count-1]);
+                mainDescPath, GetSimpleList(obj), Differences[Differences.Count-1]);
             return desc;
         }
 
@@ -544,7 +551,7 @@ namespace CannyEdgeDetectionCSharp
                     }
                     else if (line.Contains(bCannyLowTL))
                     {
-                        CannyLowTL = Single.Parse(line.Substring(line.IndexOf(' ')+1));
+                        CannyLowTl = Single.Parse(line.Substring(line.IndexOf(' ')+1));
                     }
                     else if (line.Contains(bCannyMaskSize))
                     {
